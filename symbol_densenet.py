@@ -143,23 +143,29 @@ def DenseNet(units, num_stage, growth_rate, num_class, data_type, reduction=0.5,
     data = mx.sym.Variable(name='data')
     data = mx.sym.BatchNorm(data=data, fix_gamma=True, eps=2e-5, momentum=bn_mom, name='bn_data')
     if data_type == 'imagenet':
-        body = mx.sym.Convolution(data=data, num_filter=growth_rate*2, kernel=(7, 7), stride=(2,2), pad=(3, 3),
+        body = mx.sym.Convolution(data=data, num_filter=growth_rate*2, kernel=(7, 7), stride=(2, 2), pad=(3, 3),
                                   no_bias=True, name="conv0", workspace=workspace)
         body = mx.sym.BatchNorm(data=body, fix_gamma=False, eps=2e-5, momentum=bn_mom, name='bn0')
         body = mx.sym.Activation(data=body, act_type='relu', name='relu0')
-        body = mx.symbol.Pooling(data=body, kernel=(3, 3), stride=(2,2), pad=(1,1), pool_type='max')
+        body = mx.symbol.Pooling(data=body, kernel=(3, 3), stride=(2, 2), pad=(1,1), pool_type='max')
     elif data_type == 'vggface':
-        body = mx.sym.Convolution(data=data, num_filter=growth_rate*2, kernel=(7, 7), stride=(2,2), pad=(3, 3),
+        body = mx.sym.Convolution(data=data, num_filter=growth_rate*2, kernel=(7, 7), stride=(2, 2), pad=(3, 3),
                                   no_bias=True, name="conv0", workspace=workspace)
         body = mx.sym.BatchNorm(data=body, fix_gamma=False, eps=2e-5, momentum=bn_mom, name='bn0')
         body = mx.sym.Activation(data=body, act_type='relu', name='relu0')
-        body = mx.symbol.Pooling(data=body, kernel=(3, 3), stride=(2,2), pad=(1,1), pool_type='max')
+        body = mx.symbol.Pooling(data=body, kernel=(3, 3), stride=(2, 2), pad=(1,1), pool_type='max')
     elif data_type == 'msface':
-        body = mx.sym.Convolution(data=data, num_filter=growth_rate*2, kernel=(7, 7), stride=(2,2), pad=(3, 3),
+        body = mx.sym.Convolution(data=data, num_filter=growth_rate*2, kernel=(7, 7), stride=(2, 2), pad=(3, 3),
                                   no_bias=True, name="conv0", workspace=workspace)
         body = mx.sym.BatchNorm(data=body, fix_gamma=False, eps=2e-5, momentum=bn_mom, name='bn0')
         body = mx.sym.Activation(data=body, act_type='relu', name='relu0')
-        body = mx.symbol.Pooling(data=body, kernel=(3, 3), stride=(2,2), pad=(1,1), pool_type='max')
+        body = mx.symbol.Pooling(data=body, kernel=(3, 3), stride=(2, 2), pad=(1,1), pool_type='max')
+    elif data_type == 'kd':
+        body = mx.sym.Convolution(data=data, num_filter=growth_rate*2, kernel=(7, 7), stride=(2, 2), pad=(3, 3),
+                                  no_bias=True, name="conv0", workspace=workspace)
+        body = mx.sym.BatchNorm(data=body, fix_gamma=False, eps=2e-5, momentum=bn_mom, name='bn0')
+        body = mx.sym.Activation(data=body, act_type='relu', name='relu0')
+        body = mx.symbol.Pooling(data=body, kernel=(3, 3), stride=(2, 2), pad=(1,1), pool_type='max')
     else:
         raise ValueError("do not support {} yet".format(data_type))
     for i in range(num_stage-1):

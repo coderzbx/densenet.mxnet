@@ -69,6 +69,22 @@ def main():
         symbol = DenseNet(units=units, num_stage=4, growth_rate=48 if args.depth == 161 else args.growth_rate, num_class=args.num_classes, 
                             data_type="msface", reduction=args.reduction, drop_out=args.drop_out, bottle_neck=True,
                             bn_mom=args.bn_mom, workspace=args.workspace)
+    elif args.data_type == "kd":
+        args.num_classes = 15
+        if args.depth   == 121:
+            units = [6, 12, 24, 16]
+        elif args.depth == 169:
+            units = [6, 12, 32, 32]
+        elif args.depth == 201:
+            units = [6, 12, 48, 32]
+        elif args.depth == 161:
+            units = [6, 12, 36, 24]
+        else:
+            raise ValueError("no experiments done on detph {}, you can do it youself".format(args.depth))
+        symbol = DenseNet(units=units, num_stage=4, growth_rate=48 if args.depth == 161 else args.growth_rate, num_class=args.num_classes,
+                            data_type="kd", reduction=args.reduction, drop_out=args.drop_out, bottle_neck=True,
+                            bn_mom=args.bn_mom, workspace=args.workspace)
+        # mx.viz.plot_network(symbol).view()
 	
     else:
         raise ValueError("do not support {} yet".format(args.data_type))
@@ -79,7 +95,7 @@ def main():
     if not os.path.exists("./model"):
         os.mkdir("./model")
     model_prefix = "model/densenet-{}-{}-{}".format(args.data_type, args.depth, kv.rank)
-    checkpoint = mx.callback.do_checkpoint(model_prefix)
+    checkpoint = mx.callback.do_checkpoint(model_prefix, 5)
     arg_params = None
     aux_params = None
     if args.retrain:
@@ -89,37 +105,37 @@ def main():
     # pdb.set_trace()
 
     train = mx.io.ImageRecordIter(
-        path_imgrec         = os.path.join(args.data_dir, "train.rec") if args.data_type == 'cifar10' else
-                              os.path.join(args.data_dir, "train_256_q90.rec") if args.aug_level == 1
-                              else os.path.join(args.data_dir, "train_480_q90.rec"),
+        path_imgrec         = os.path.join(args.data_dir, "20180129.rec"),
         label_width         = 1,
         data_name           = 'data',
         label_name          = 'softmax_label',
-        data_shape          = (3, 32, 32) if args.data_type=="cifar10" else (3, 224, 224),
+        resize              = 256,
+        data_shape          = (3, 112, 112),
         batch_size          = args.batch_size,
-        pad                 = 4 if args.data_type == "cifar10" else 0,
+        pad                 = 0,
         fill_value          = 127,  # only used when pad is valid
         rand_crop           = True,
         max_random_scale    = 1.0,  # 480 with imagnet and vggface, 384 with msface, 32 with cifar10
-        min_random_scale    = 1.0 if args.data_type == "cifar10" else 1.0 if args.aug_level == 1 else 0.667,  # 256.0/480.0=0.533, 256.0/384.0=0.667
-        max_aspect_ratio    = 0 if args.data_type == "cifar10" else 0 if args.aug_level == 1 else 0.25,
-        random_h            = 0 if args.data_type == "cifar10" else 0 if args.aug_level == 1 else 36,  # 0.4*90
-        random_s            = 0 if args.data_type == "cifar10" else 0 if args.aug_level == 1 else 50,  # 0.4*127
-        random_l            = 0 if args.data_type == "cifar10" else 0 if args.aug_level == 1 else 50,  # 0.4*127
-        max_rotate_angle    = 0 if args.aug_level <= 2 else 10,
-        max_shear_ratio     = 0 if args.aug_level <= 2 else 0.1,
-        rand_mirror         = True,
+        min_random_scale    = 0.8,  # 256.0/480.0=0.533, 256.0/384.0=0.667
+        max_aspect_ratio    = 0.25,
+        random_h            = 0,  # 0.4*90
+        random_s            = 0,  # 0.4*127
+        random_l            = 0,  # 0.4*127
+        max_rotate_angle    = 10,
+        max_shear_ratio     = 0,
+        rand_mirror         = False,
         shuffle             = True,
         num_parts           = kv.num_workers,
-        part_index          = kv.rank)
+        part_index          = kv.rank,
+    )
     val = mx.io.ImageRecordIter(
-        path_imgrec         = os.path.join(args.data_dir, "val.rec") if args.data_type == 'cifar10' else
-                              os.path.join(args.data_dir, "val_256_q90.rec"),
+        path_imgrec         = os.path.join(args.data_dir, "arrow_v1.rec"),
         label_width         = 1,
+        resize              = 256,
         data_name           = 'data',
         label_name          = 'softmax_label',
         batch_size          = args.batch_size,
-        data_shape          = (3, 32, 32) if args.data_type=="cifar10" else (3, 224, 224),
+        data_shape          = (3, 112, 112),
         rand_crop           = False,
         rand_mirror         = False,
         num_parts           = kv.num_workers,
@@ -130,7 +146,7 @@ def main():
         symbol              = symbol,
         arg_params          = arg_params,
         aux_params          = aux_params,
-        num_epoch           = 200 if args.data_type == "cifar10" else 125,
+        num_epoch           = 5000,
         begin_epoch         = begin_epoch,
         learning_rate       = args.lr,
         momentum            = args.mom,
@@ -138,10 +154,8 @@ def main():
         optimizer           = 'nag',
         # optimizer          = 'sgd',
         initializer         = mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2),
-        lr_scheduler        = multi_factor_scheduler(begin_epoch, epoch_size, step=[220, 260, 280], factor=0.1)
-                             if args.data_type=='cifar10' else
-                             multi_factor_scheduler(begin_epoch, epoch_size, step=[30, 60, 90, 95, 115, 120], factor=0.1),
-        )
+        lr_scheduler        = multi_factor_scheduler(begin_epoch, epoch_size, step=[100, 1000, 4000], factor=0.1),
+    )
 	
     # import pdb
     # pdb.set_trace()
@@ -149,8 +163,9 @@ def main():
     model.fit(
         X                  = train,
         eval_data          = val,
-        eval_metric        = ['acc'] if args.data_type=='cifar10' else
-                             ['acc', mx.metric.create('top_k_accuracy', top_k = 5)],
+        # eval_metric        = ['acc'] if args.data_type=='cifar10' else
+        #                      ['acc', mx.metric.create('top_k_accuracy', top_k=1)],
+        eval_metric        = ['acc'],
         kvstore            = kv,
         batch_end_callback = mx.callback.Speedometer(args.batch_size, args.frequent),
         epoch_end_callback = checkpoint)
@@ -160,9 +175,9 @@ def main():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="command for training DenseNet-BC")
     parser.add_argument('--gpus', type=str, default='0', help='the gpus will be used, e.g "0,1,2,3"')
-    parser.add_argument('--data-dir', type=str, default='./data/imagenet/', help='the input data directory')
-    parser.add_argument('--data-type', type=str, default='imagenet', help='the dataset type')
-    parser.add_argument('--list-dir', type=str, default='./', help='the directory which contain the training list file')
+    parser.add_argument('--data-dir', type=str, default='/data/deeplearning/dataset/label_arrow/', help='the input data directory')
+    parser.add_argument('--data-type', type=str, default='kd', help='the dataset type')
+    parser.add_argument('--list-dir', type=str, default='/data/deeplearning/dataset/label_arrow/', help='the directory which contain the training list file')
     parser.add_argument('--lr', type=float, default=0.1, help='initialization learning reate')
     parser.add_argument('--mom', type=float, default=0.9, help='momentum for sgd')
     parser.add_argument('--bn-mom', type=float, default=0.9, help='momentum for batch normlization')
@@ -174,8 +189,8 @@ if __name__ == "__main__":
     parser.add_argument('--workspace', type=int, default=512, help='memory space size(MB) used in convolution, if xpu '
                         ' memory is oom, then you can try smaller vale, such as --workspace 256')
     parser.add_argument('--depth', type=int, default=50, help='the depth of resnet')
-    parser.add_argument('--num-classes', type=int, default=1000, help='the class number of your task')
-    parser.add_argument('--aug-level', type=int, default=2, choices=[1, 2, 3],
+    parser.add_argument('--num-classes', type=int, default=15, help='the class number of your task')
+    parser.add_argument('--aug-level', type=int, default=3, choices=[1, 2, 3],
                         help='level 1: use only random crop and random mirror\n'
                              'level 2: add scale/aspect/hsv augmentation based on level 1\n'
                              'level 3: add rotation/shear augmentation based on level 2')
