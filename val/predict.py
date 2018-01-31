@@ -1,8 +1,9 @@
 # -*-coding:utf-8-*-
+import sys
+sys.path.insert(0, "/opt/densenet.mxnet")
 
 import numpy as np
 import os
-from PIL import Image
 import mxnet as mx
 import time
 import argparse
@@ -45,7 +46,7 @@ class ModelClassArrow:
             image = np.asarray(bytearray(image_data), dtype="uint8")
             origin_frame = cv2.imdecode(image, cv2.COLOR_BGR2RGB)
 
-            img = cv2.resize(origin_frame, (224, 224))
+            img = cv2.resize(origin_frame, (112, 112))
             img = np.swapaxes(img, 0, 2)
             img = np.swapaxes(img, 1, 2)
             img = img[np.newaxis, :]
@@ -75,51 +76,30 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--dir', type=str, required=True)
+    parser.add_argument('--package', type=str, required=True)
+    parser.add_argument('--done_dir', type=str, required=True)
     args = parser.parse_args()
 
-    done_dir = os.path.join(args.dir, "done")
-    if not os.path.exists(done_dir):
-        os.mkdir(done_dir)
+    if not os.path.exists(args.done_dir):
+        print("dir[{}] is not exist".format(args.done_dir))
+        exit(0)
 
-    done_csv = os.path.join(done_dir, "ImageType.csv")
-    with open(done_csv, "w") as fw:
-        package_list = os.listdir(args.dir)
-        for package_dir in package_list:
-            if not package_dir.isdigit():
-                continue
-            label_file = os.path.join(args.dir, package_dir, "ImageType.csv")
-            if not os.path.exists(label_file):
-                continue
+    model_net = ModelClassArrow(gpu_id=0)
 
-            with open(label_file, "r") as f:
-                line_str = f.readline()
-                fw.write(line_str)
-                # skip first line
-                line_str = f.readline()
-                while line_str:
-                    fw.write(line_str)
-                    line_str = line_str.strip()
-                    file_name, class_id = line_str.split(",")
+    done_dir = args.done_dir
+    done_list = os.listdir(done_dir)
+    for done_id in done_list:
+        name_list = done_id.split(".")
+        name_ext = name_list[1]
+        if name_ext not in ["jpg", "png"]:
+            done_list.remove(done_id)
 
-                    class_id = int(class_id)
-                    map_id = class_id_map[class_id]
-
-                    src_path = os.path.join(args.dir, package_dir, file_name)
-                    dest_path = os.path.join(done_dir, file_name)
-
-                    shutil.move(src_path, dest_path)
-
-                    line_str = f.readline()
-
-    package_list = os.listdir(args.dir)
+    packge_file = []
+    package_list = os.listdir(args.package)
     for package_dir in package_list:
         if not package_dir.isdigit():
             continue
-
         image_dir = os.path.join(args.dir, package_dir)
-        model_net = ModelClassArrow(gpu_id=0)
-
-        proc_list = []
         file_list = os.listdir(image_dir)
         for id_ in file_list:
             name_list = str(id_).split(".")
@@ -130,49 +110,63 @@ if __name__ == "__main__":
             name_ext = name_list[1]
             if name_ext != 'png' and name_ext != 'jpg':
                 continue
-            proc_list.append(id_)
+            packge_file.append(id_)
 
-        dest_dir = os.path.join(args.dir, "arrow_pic")
-        other_dir = os.path.join(args.dir, "other_pic")
+    proc_list = []
+    file_list = os.listdir(args.dir)
+    for id_ in file_list:
+        if id_ in done_list or id_ in packge_file:
+            continue
+
+        name_list = str(id_).split(".")
+        if len(name_list) != 2:
+            continue
+
+        name_only = name_list[0]
+        name_ext = name_list[1]
+        if name_ext != 'png' and name_ext != 'jpg':
+            continue
+        proc_list.append(id_)
+
+    dest_dir = os.path.join(args.dir, "arrow_pic")
+    other_dir = os.path.join(args.dir, "other_pic")
+    if not os.path.exists(dest_dir):
+        os.mkdir(dest_dir)
+    if not os.path.exists(other_dir):
+        os.mkdir(other_dir)
+
+    for id_ in proc_list:
+        file_path = os.path.join(args.dir, id_)
         if not os.path.exists(dest_dir):
-            os.mkdir(dest_dir)
-        if not os.path.exists(other_dir):
-            os.mkdir(other_dir)
+            os.makedirs(dest_dir)
 
-        for id_ in proc_list:
-            if id_ == "107_20171228041450547599_00_004_3.jpg":
-                print("got it")
-            file_path = os.path.join(image_dir, id_)
-            if not os.path.exists(dest_dir):
-                os.makedirs(dest_dir)
+        name_list = str(id_).split(".")
+        name_only = name_list[0]
+        name_ext = name_list[1]
 
-            name_list = str(id_).split(".")
-            name_only = name_list[0]
-            name_ext = name_list[1]
+        file_id = name_only + "." + name_ext
+        dest_path = os.path.join(dest_dir, file_id)
 
-            file_id = name_only + "." + name_ext
-            dest_path = os.path.join(dest_dir, file_id)
+        if os.path.exists(dest_path):
+            continue
 
-            if os.path.exists(dest_path):
-                continue
-
-            try:
-                pred_label = None
-                start = time.time()
-                with open(file_path, "rb") as f:
-                    img = f.read()
-                    pred_label = model_net.do(image_data=img)
-                end = time.time()
-                if pred_label[0] == 1:
-                    shutil.move(file_path, dest_path)
-                    print("Processed {} in {} ms, labels:{}".format(
-                        dest_path, str((end - start) * 1000),
-                        str(pred_label))
-                    )
-                else:
-                    dest_path = os.path.join(other_dir, file_id)
-                    shutil.move(file_path, dest_path)
-            except Exception as e:
-                print (repr(e))
+        try:
+            pred_label = None
+            start = time.time()
+            with open(file_path, "rb") as f:
+                img = f.read()
+                pred_label = model_net.do(image_data=img)
+            end = time.time()
+            if pred_label[0] == 1:
+                shutil.move(file_path, dest_path)
+                print("Processed {} in {} ms, labels:{}".format(
+                    dest_path, str((end - start) * 1000),
+                    str(pred_label))
+                )
+            else:
+                dest_path = os.path.join(other_dir, file_id)
+                shutil.move(file_path, dest_path)
+        except Exception as e:
+            print (repr(e))
     time_end = time.time()
     print("finish in {} s".format(time_end-time_start))

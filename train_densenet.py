@@ -92,9 +92,9 @@ def main():
     devs = mx.cpu() if args.gpus is None else [mx.gpu(int(i)) for i in args.gpus.split(',')]
     epoch_size = max(int(args.num_examples / args.batch_size / kv.num_workers), 1)
     begin_epoch = args.model_load_epoch if args.model_load_epoch else 0
-    if not os.path.exists("./model"):
-        os.mkdir("./model")
-    model_prefix = "model/densenet-{}-{}-{}".format(args.data_type, args.depth, kv.rank)
+    if not os.path.exists("./model_v2"):
+        os.mkdir("./model_v2")
+    model_prefix = "model_v2/densenet-{}-{}-{}".format(args.data_type, args.depth, kv.rank)
     checkpoint = mx.callback.do_checkpoint(model_prefix, 5)
     arg_params = None
     aux_params = None
@@ -103,9 +103,10 @@ def main():
     
     # import pdb
     # pdb.set_trace()
+    file_name = args.train_prefix + ".rec"
 
     train = mx.io.ImageRecordIter(
-        path_imgrec         = os.path.join(args.data_dir, "20180129.rec"),
+        path_imgrec         = os.path.join(args.data_dir, file_name),
         label_width         = 1,
         data_name           = 'data',
         label_name          = 'softmax_label',
@@ -128,8 +129,10 @@ def main():
         num_parts           = kv.num_workers,
         part_index          = kv.rank,
     )
+
+    file_name = args.val_prefix + ".rec"
     val = mx.io.ImageRecordIter(
-        path_imgrec         = os.path.join(args.data_dir, "arrow_v1.rec"),
+        path_imgrec         = os.path.join(args.data_dir, file_name),
         label_width         = 1,
         resize              = 256,
         data_name           = 'data',
@@ -175,9 +178,11 @@ def main():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="command for training DenseNet-BC")
     parser.add_argument('--gpus', type=str, default='0', help='the gpus will be used, e.g "0,1,2,3"')
-    parser.add_argument('--data-dir', type=str, default='/data/deeplearning/dataset/label_arrow/', help='the input data directory')
+    parser.add_argument('--data-dir', type=str, default='/data/deeplearning/dataset/label_arrow/training/', help='the input data directory')
     parser.add_argument('--data-type', type=str, default='kd', help='the dataset type')
-    parser.add_argument('--list-dir', type=str, default='/data/deeplearning/dataset/label_arrow/', help='the directory which contain the training list file')
+    parser.add_argument('--list-dir', type=str, default='/data/deeplearning/dataset/label_arrow/training/', help='the directory which contain the training list file')
+    parser.add_argument('--train_prefix', type=str, default='', help='list file name')
+    parser.add_argument('--val_prefix', type=str, default='', help='list file name')
     parser.add_argument('--lr', type=float, default=0.1, help='initialization learning reate')
     parser.add_argument('--mom', type=float, default=0.9, help='momentum for sgd')
     parser.add_argument('--bn-mom', type=float, default=0.9, help='momentum for batch normlization')
@@ -203,7 +208,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if not os.path.exists("./log"):
         os.mkdir("./log")
-    hdlr = logging.FileHandler('./log/log-densenet-{}-{}.log'.format(args.data_type, args.depth))
+    hdlr = logging.FileHandler('./log/log-densenet-{}-{}-{}.log'.format(args.data_type, args.depth, args.train_prefix))
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
     logging.info(args)

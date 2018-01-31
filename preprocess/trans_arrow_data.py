@@ -19,6 +19,7 @@
 from __future__ import print_function
 import os
 import sys
+sys.path.insert(0, "/opt/densenet.mxnet")
 
 import mxnet as mx
 import random
@@ -28,11 +29,13 @@ import time
 import traceback
 
 from class_map import arrow_labels_v1
+from class_map import arrow_labels_v2
 
 try:
     import multiprocessing
 except ImportError:
     multiprocessing = None
+
 
 def list_image(root, recursive, exts):
     i = 0
@@ -59,6 +62,7 @@ def list_image(root, recursive, exts):
                 yield (i, os.path.relpath(fpath, root), 0)
                 i += 1
 
+
 def write_list(path_out, image_list):
     with open(path_out, 'w') as fout:
         for i, item in enumerate(image_list):
@@ -68,37 +72,34 @@ def write_list(path_out, image_list):
             line += '%s\n' % item[1]
             fout.write(line)
 
+
 def make_list(args):
-    class_id_map = {label.id: label.categoryId for label in arrow_labels_v1}
+    class_id_map = {label.id: label.categoryId for label in arrow_labels_v2}
 
     image_list = []
-    dir_list = os.listdir(args.root)
     image_index = 0
-    for dir_name in dir_list:
-        dir_path = os.path.join(args.root, dir_name)
-        if str(dir_name).isdigit() and os.path.isdir(dir_path):
-            label_file = os.path.join(dir_path, "ImageType.csv")
-            if not os.path.exists(label_file):
-                continue
-        else:
-            continue
 
-        with open(label_file, "r") as f:
+    dir_path = args.root
+    label_file = os.path.join(dir_path, "ImageType.csv")
+    if not os.path.exists(label_file):
+        return
+
+    with open(label_file, "r") as f:
+        line_str = f.readline()
+        # skip first line
+        line_str = f.readline()
+        while line_str:
+            line_str = line_str.strip()
+            file_name, class_id = line_str.split(",")
+            real_path = os.path.join(dir_path, file_name)
+
+            class_id = int(class_id)
+            map_id = class_id_map[class_id]
+
+            image_list.append((image_index, real_path, str(map_id)))
+
+            image_index += 1
             line_str = f.readline()
-            # skip first line
-            line_str = f.readline()
-            while line_str:
-                line_str = line_str.strip()
-                file_name, class_id = line_str.split(",")
-                real_path = os.path.join(dir_name, file_name)
-
-                class_id = int(class_id)
-                map_id = class_id_map[class_id]
-
-                image_list.append((image_index, real_path, str(map_id)))
-
-                image_index += 1
-                line_str = f.readline()
 
     # image_list = list_image(args.root, args.recursive, args.exts)
     image_list = list(image_list)
@@ -124,6 +125,7 @@ def make_list(args):
                 write_list(args.prefix + str_chunk + '_val.lst', chunk[sep_test + sep:])
             write_list(args.prefix + str_chunk + '_train.lst', chunk[sep_test:sep_test + sep])
 
+
 def read_list(path_in):
     with open(path_in) as fin:
         while True:
@@ -142,8 +144,12 @@ def read_list(path_in):
                 continue
             yield item
 
+
 def image_encode(args, i, item, q_out):
     fullpath = os.path.join(args.root, item[1])
+
+    if not os.path.exists(fullpath):
+        print(fullpath)
 
     if len(item) > 3 and args.pack_label:
         header = mx.recordio.IRHeader(0, item[2:], item[0], 0)
@@ -196,6 +202,7 @@ def image_encode(args, i, item, q_out):
         q_out.put((i, None, item))
         return
 
+
 def read_worker(args, q_in, q_out):
     while True:
         deq = q_in.get()
@@ -203,6 +210,7 @@ def read_worker(args, q_in, q_out):
             break
         i, item = deq
         image_encode(args, i, item, q_out)
+
 
 def write_worker(q_out, fname, working_dir):
     pre_time = time.time()
@@ -232,6 +240,7 @@ def write_worker(q_out, fname, working_dir):
                 print('time:', cur_time - pre_time, ' count:', count)
                 pre_time = cur_time
             count += 1
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -285,9 +294,10 @@ def parse_args():
     rgroup.add_argument('--pack-label', action='store_true',
         help='Whether to also pack multi dimensional label in the record file')
     args = parser.parse_args()
-    args.prefix = os.path.abspath(args.prefix)
-    args.root = os.path.abspath(args.root)
+    # args.prefix = os.path.abspath(args.prefix)
+    # args.root = os.path.abspath(args.root)
     return args
+
 
 if __name__ == '__main__':
     args = parse_args()
