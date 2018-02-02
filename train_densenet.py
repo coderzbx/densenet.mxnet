@@ -92,9 +92,9 @@ def main():
     devs = mx.cpu() if args.gpus is None else [mx.gpu(int(i)) for i in args.gpus.split(',')]
     epoch_size = max(int(args.num_examples / args.batch_size / kv.num_workers), 1)
     begin_epoch = args.model_load_epoch if args.model_load_epoch else 0
-    if not os.path.exists("./model_v2"):
-        os.mkdir("./model_v2")
-    model_prefix = "model_v2/densenet-{}-{}-{}".format(args.data_type, args.depth, kv.rank)
+    if not os.path.exists("/data/deeplearning/dataset/label_arrow/training/model"):
+        os.mkdir("/data/deeplearning/dataset/label_arrow/training/model")
+    model_prefix = "/data/deeplearning/dataset/label_arrow/training/model/densenet-{}-{}-{}".format(args.data_type, args.depth, kv.rank)
     checkpoint = mx.callback.do_checkpoint(model_prefix, 5)
     arg_params = None
     aux_params = None
@@ -183,7 +183,7 @@ if __name__ == "__main__":
     parser.add_argument('--list-dir', type=str, default='/data/deeplearning/dataset/label_arrow/training/', help='the directory which contain the training list file')
     parser.add_argument('--train_prefix', type=str, default='', help='list file name')
     parser.add_argument('--val_prefix', type=str, default='', help='list file name')
-    parser.add_argument('--lr', type=float, default=0.1, help='initialization learning reate')
+    parser.add_argument('--lr', type=float, default=0.01, help='initialization learning reate')
     parser.add_argument('--mom', type=float, default=0.9, help='momentum for sgd')
     parser.add_argument('--bn-mom', type=float, default=0.9, help='momentum for batch normlization')
     parser.add_argument('--wd', type=float, default=0.0001, help='weight decay for sgd')
@@ -199,7 +199,7 @@ if __name__ == "__main__":
                         help='level 1: use only random crop and random mirror\n'
                              'level 2: add scale/aspect/hsv augmentation based on level 1\n'
                              'level 3: add rotation/shear augmentation based on level 2')
-    parser.add_argument('--num-examples', type=int, default=1281167, help='the number of training examples')
+    parser.add_argument('--num-examples', type=int, default=40835, help='the number of training examples')
     parser.add_argument('--kv-store', type=str, default='device', help='the kvstore type')
     parser.add_argument('--model-load-epoch', type=int, default=0,
                         help='load the model on an epoch using the model-load-prefix')

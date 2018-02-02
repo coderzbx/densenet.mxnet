@@ -96,6 +96,9 @@ def make_list(args):
             class_id = int(class_id)
             map_id = class_id_map[class_id]
 
+            if class_id > 1 or map_id > 1:
+                print("wait")
+
             image_list.append((image_index, real_path, str(map_id)))
 
             image_index += 1

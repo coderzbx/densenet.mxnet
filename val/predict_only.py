@@ -26,8 +26,8 @@ class ModelClassArrow:
         cur_path = os.path.realpath(__file__)
         cur_dir = os.path.dirname(cur_path)
 
-        model_file_name = "densenet-kd-169-0-5000.params"
-        self.weights = os.path.join(cur_dir, model_file_name)
+        # model_file_name = "densenet-kd-169-0-5000.params"
+        self.weights = model_file
 
         network, net_args, net_auxs = load_weights(self.weights)
         context = [mx.gpu(gpu_id)]
@@ -46,7 +46,7 @@ class ModelClassArrow:
             image = np.asarray(bytearray(image_data), dtype="uint8")
             origin_frame = cv2.imdecode(image, cv2.COLOR_BGR2RGB)
 
-            img = cv2.resize(origin_frame, (112, 112))
+            img = cv2.resize(origin_frame, (224, 224))
             img = np.swapaxes(img, 0, 2)
             img = np.swapaxes(img, 1, 2)
             img = img[np.newaxis, :]
@@ -76,7 +76,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--dir', type=str, required=True)
+    parser.add_argument('--model', type=str, required=True)
     args = parser.parse_args()
+
+    model_file = args.model
+    if not os.path.exists(model_file):
+        print("model file[{}] is not exist".format(model_file))
+        exit(0)
 
     model_net = ModelClassArrow(gpu_id=0)
 
@@ -100,12 +106,9 @@ if __name__ == "__main__":
                 continue
             proc_list.append(id_)
 
-        dest_dir = os.path.join(image_dir, "arrow_pic")
-        other_dir = os.path.join(image_dir, "other_pic")
+        dest_dir = os.path.join(args.dir, "arrow_recognition", package_dir)
         if not os.path.exists(dest_dir):
-            os.mkdir(dest_dir)
-        if not os.path.exists(other_dir):
-            os.mkdir(other_dir)
+            os.makedirs(dest_dir)
 
         for id_ in proc_list:
             file_path = os.path.join(image_dir, id_)
@@ -121,15 +124,18 @@ if __name__ == "__main__":
                     img = f.read()
                     pred_label = model_net.do(image_data=img)
                 end = time.time()
-                if pred_label[0] == 1:
-                    shutil.copy(file_path, dest_path)
-                    print("Processed {} in {} ms, labels:{}".format(
-                        dest_path, str((end - start) * 1000),
-                        str(pred_label))
-                    )
-                else:
-                    dest_path = os.path.join(other_dir, id_)
-                    shutil.copy(file_path, dest_path)
+
+                class_id = pred_label[0]
+                class_dir = os.path.join(dest_dir, str(class_id))
+                if not os.path.exists(class_dir):
+                    os.makedirs(class_dir)
+
+                dest_path = os.path.join(class_dir, id_)
+                shutil.copy(file_path, dest_path)
+                print("Processed {} in {} ms, labels:{}".format(
+                    dest_path, str((end - start) * 1000),
+                    str(pred_label))
+                )
             except Exception as e:
                 print (repr(e))
     time_end = time.time()
