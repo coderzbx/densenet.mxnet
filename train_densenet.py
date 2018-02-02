@@ -183,7 +183,7 @@ if __name__ == "__main__":
     parser.add_argument('--list-dir', type=str, default='/data/deeplearning/dataset/label_arrow/training/', help='the directory which contain the training list file')
     parser.add_argument('--train_prefix', type=str, default='', help='list file name')
     parser.add_argument('--val_prefix', type=str, default='', help='list file name')
-    parser.add_argument('--lr', type=float, default=0.01, help='initialization learning reate')
+    parser.add_argument('--lr', type=float, default=0.1, help='initialization learning reate')
     parser.add_argument('--mom', type=float, default=0.9, help='momentum for sgd')
     parser.add_argument('--bn-mom', type=float, default=0.9, help='momentum for batch normlization')
     parser.add_argument('--wd', type=float, default=0.0001, help='weight decay for sgd')
