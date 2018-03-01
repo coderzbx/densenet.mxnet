@@ -129,6 +129,53 @@ def make_list(args):
             write_list(args.prefix + str_chunk + '_train.lst', chunk[sep_test:sep_test + sep])
 
 
+def make_list_dir(args):
+    class_id_map = {label.id: label.categoryId for label in arrow_labels_v2}
+
+    image_list = []
+    image_index = 0
+
+    dir_path = args.root
+
+    class_dir_list = os.listdir(dir_path)
+    for class_id in class_dir_list:
+        file_list = os.listdir(os.path.join(dir_path, class_id))
+        for file_id in file_list:
+            if len(file_id) < 4 or file_id[-3:] not in ['jpg', 'png']:
+                continue
+
+            real_path = os.path.join(dir_path, class_id, file_id)
+            class_num = int(class_id)
+            map_id = class_id_map[class_num]
+
+            image_list.append((image_index, real_path, str(map_id)))
+            image_index += 1
+
+    # image_list = list_image(args.root, args.recursive, args.exts)
+    image_list = list(image_list)
+    if args.shuffle is True:
+        random.seed(100)
+        random.shuffle(image_list)
+    N = len(image_list)
+    chunk_size = (N + args.chunks - 1) // args.chunks
+    for i in range(args.chunks):
+        chunk = image_list[i * chunk_size:(i + 1) * chunk_size]
+        if args.chunks > 1:
+            str_chunk = '_%d' % i
+        else:
+            str_chunk = ''
+        sep = int(chunk_size * args.train_ratio)
+        sep_test = int(chunk_size * args.test_ratio)
+        if args.train_ratio == 1.0:
+            write_list(args.prefix + str_chunk + '.lst', chunk)
+        else:
+            if args.test_ratio:
+                write_list(args.prefix + str_chunk + '_test.lst', chunk[:sep_test])
+            if args.train_ratio + args.test_ratio < 1.0:
+                write_list(args.prefix + str_chunk + '_val.lst', chunk[sep_test + sep:])
+            write_list(args.prefix + str_chunk + '_train.lst', chunk[sep_test:sep_test + sep])
+
+
 def read_list(path_in):
     with open(path_in) as fin:
         while True:
@@ -305,7 +352,7 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     if args.list:
-        make_list(args)
+        make_list_dir(args)
     else:
         if os.path.isdir(args.prefix):
             working_dir = args.prefix

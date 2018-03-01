@@ -92,9 +92,12 @@ def main():
     devs = mx.cpu() if args.gpus is None else [mx.gpu(int(i)) for i in args.gpus.split(',')]
     epoch_size = max(int(args.num_examples / args.batch_size / kv.num_workers), 1)
     begin_epoch = args.model_load_epoch if args.model_load_epoch else 0
-    if not os.path.exists("/data/deeplearning/dataset/label_arrow/training/model"):
-        os.mkdir("/data/deeplearning/dataset/label_arrow/training/model")
-    model_prefix = "/data/deeplearning/dataset/label_arrow/training/model/densenet-{}-{}-{}".format(args.data_type, args.depth, kv.rank)
+
+    save_model_prefix = args.model_prefix
+    model_dir = os.path.dirname(save_model_prefix)
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+    model_prefix = "{}/densenet-{}-{}-{}".format(model_dir, args.data_type, args.depth, kv.rank)
     checkpoint = mx.callback.do_checkpoint(model_prefix, 5)
     arg_params = None
     aux_params = None
@@ -182,6 +185,7 @@ if __name__ == "__main__":
     parser.add_argument('--data-type', type=str, default='kd', help='the dataset type')
     parser.add_argument('--list-dir', type=str, default='/data/deeplearning/dataset/label_arrow/training/', help='the directory which contain the training list file')
     parser.add_argument('--train_prefix', type=str, default='', help='list file name')
+    parser.add_argument('--model_prefix', type=str, default='', help='list model name')
     parser.add_argument('--val_prefix', type=str, default='', help='list file name')
     parser.add_argument('--lr', type=float, default=0.1, help='initialization learning reate')
     parser.add_argument('--mom', type=float, default=0.9, help='momentum for sgd')

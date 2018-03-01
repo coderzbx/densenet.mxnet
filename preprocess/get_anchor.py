@@ -8,6 +8,7 @@ import argparse
 import numpy as np
 import os
 import random
+from PIL import Image
 # from tqdm import tqdm
 import sklearn.cluster as cluster
 
@@ -109,13 +110,39 @@ def get_file_content(fnm):
         return [line.strip() for line in f]
 
 
+def make_file(file_list, file_path):
+    with open(file_path, "w") as f:
+        with open(file_list, "r") as fin:
+            while True:
+                line = fin.readline()
+                if not line:
+                    break
+                line = [i.strip() for i in line.strip().split('\t')]
+                line_len = len(line)
+                if line_len < 3:
+                    print('lst should at least has three parts, but only has %s parts for %s' % (line_len, line))
+                    continue
+                file_path = line[2]
+                image = Image.open(file_path)
+                w, h = image.size
+                f.write("{}\t{}\n".format(w, h))
+
+
 def main(args):
+    if not os.path.exists(args.file_list):
+        print("file:{} is not exist".format(args.file_list))
+        exit(0)
+
+    # generate the anchor text
+    if not os.path.exists("./anchor.txt"):
+        make_file(args.file_list, "./anchor.txt")
+
     print("Reading Data ...")
     data = []
     for line in file("./anchor.txt"):
       line = line.strip().split("\t")
-      if float(line[-2]) > 1000:
-        continue
+      # if float(line[-2]) > 1000:
+      #   continue
       data.append((float(line[-2]), float(line[-1])))
     data = np.array(data).astype(np.single)
     print("data_shape: {}".format(data.shape))
@@ -139,6 +166,7 @@ def main(args):
 if "__main__" == __name__:
     parser = argparse.ArgumentParser()
 #parser.add_argument('file_list', nargs='+', help='TrainList')
+    parser.add_argument('--file_list', type=str, help='train list')
     parser.add_argument('--num_clusters', '-n', default=10, type=int, help='Number of Clusters')
     parser.add_argument('--output', '-o', default='./anchor_cluster.txt', type=str, help='Result Output File')
     parser.add_argument('--tol', '-t', default=0.00005, type=float, help='Tolerate')

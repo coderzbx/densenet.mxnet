@@ -50,6 +50,8 @@ if __name__ == "__main__":
                     dest_path = os.path.join(done_dir, file_name)
 
                     if file_name not in done_list:
+                        if src_path == dest_path:
+                            continue
                         shutil.copy(src_path, dest_path)
                         fw.write(line_str + "\n")
 

@@ -26,7 +26,7 @@ class ModelClassArrow:
         cur_dir = os.path.dirname(cur_path)
         cur_list = os.listdir(cur_dir)
 
-        model_file_name = "densenet-kd-169-0-5000.params"
+        model_file_name = model_file
         self.weights = os.path.join(cur_dir, model_file_name)
 
         network, net_args, net_auxs = load_weights(self.weights)
@@ -46,7 +46,7 @@ class ModelClassArrow:
             image = np.asarray(bytearray(image_data), dtype="uint8")
             origin_frame = cv2.imdecode(image, cv2.COLOR_BGR2RGB)
 
-            img = cv2.resize(origin_frame, (112, 112))
+            img = cv2.resize(origin_frame, (224, 224))
             img = np.swapaxes(img, 0, 2)
             img = np.swapaxes(img, 1, 2)
             img = img[np.newaxis, :]
@@ -75,6 +75,7 @@ if __name__ == "__main__":
     class_id_map = {label.id: label.categoryId for label in arrow_labels_v1}
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('--model', type=str, required=True)
     parser.add_argument('--dir', type=str, required=True)
     parser.add_argument('--package', type=str, required=True)
     parser.add_argument('--done_dir', type=str, required=True)
@@ -83,6 +84,12 @@ if __name__ == "__main__":
     if not os.path.exists(args.done_dir):
         print("dir[{}] is not exist".format(args.done_dir))
         exit(0)
+
+    if not os.path.exists(args.model):
+        print("model[{}] is not exist".format(args.model))
+        exit(0)
+
+    model_file = args.model
 
     model_net = ModelClassArrow(gpu_id=0)
 
@@ -128,27 +135,14 @@ if __name__ == "__main__":
             continue
         proc_list.append(id_)
 
-    dest_dir = os.path.join(args.dir, "arrow_pic")
-    other_dir = os.path.join(args.dir, "other_pic")
-    if not os.path.exists(dest_dir):
-        os.mkdir(dest_dir)
-    if not os.path.exists(other_dir):
-        os.mkdir(other_dir)
-
     for id_ in proc_list:
         file_path = os.path.join(args.dir, id_)
-        if not os.path.exists(dest_dir):
-            os.makedirs(dest_dir)
 
         name_list = str(id_).split(".")
         name_only = name_list[0]
         name_ext = name_list[1]
 
         file_id = name_only + "." + name_ext
-        dest_path = os.path.join(dest_dir, file_id)
-
-        if os.path.exists(dest_path):
-            continue
 
         try:
             pred_label = None
@@ -157,15 +151,16 @@ if __name__ == "__main__":
                 img = f.read()
                 pred_label = model_net.do(image_data=img)
             end = time.time()
-            if pred_label[0] == 1:
-                shutil.move(file_path, dest_path)
-                print("Processed {} in {} ms, labels:{}".format(
-                    dest_path, str((end - start) * 1000),
-                    str(pred_label))
-                )
-            else:
-                dest_path = os.path.join(other_dir, file_id)
-                shutil.move(file_path, dest_path)
+            class_id = pred_label[0]
+            class_dir = os.path.join(args.dir, str(class_id))
+            if not os.path.exists(class_dir):
+                os.makedirs(class_dir)
+
+            dest_path = os.path.join(class_dir, file_id)
+            shutil.move(file_path, dest_path)
+            print("Processed {} in {} ms, labels:{}".format(
+                dest_path, str((end - start) * 1000),
+                str(pred_label)))
         except Exception as e:
             print (repr(e))
     time_end = time.time()

@@ -236,21 +236,21 @@ if __name__ == "__main__":
 
     for class_id, info in recall_map.items():
         label_name = name_dict[class_id]
-        print(label_name)
+        print(label_name.encode("UTF-8"))
         print("recall:id:{},info:{}".format(class_id, json.dumps(info)))
 
     for class_id, info in accuracy_map.items():
         label_name = name_dict[class_id]
-        print(label_name)
+        print(label_name.encode("UTF-8"))
         print("accuracy:id:{},info:{}".format(class_id, json.dumps(info)))
 
     # format
     for class_id, info in recall_map.items():
         label_name = name_dict[class_id]
-        print(label_name)
+        print(label_name.encode("UTF-8"))
         print("recall:id:{},info:{}".format(class_id, json.dumps(info)))
 
     for class_id, info in accuracy_map.items():
         label_name = name_dict[class_id]
-        print(label_name)
+        print(label_name.encode("UTF-8"))
         print("accuracy:id:{},info:{}".format(class_id, json.dumps(info)))
