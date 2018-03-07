@@ -25,6 +25,7 @@ import mxnet as mx
 import random
 import argparse
 import cv2
+import numpy as np
 import time
 import traceback
 
@@ -236,6 +237,13 @@ def image_encode(args, i, item, q_out):
         else:
             margin = (img.shape[1] - img.shape[0]) // 2;
             img = img[:, margin:margin + img.shape[0]]
+    if args.center_pad:
+        newsize = max(img.shape[:2])
+        new_img = np.ones((newsize, newsize) + img.shape[2:], np.uint8) * 127
+        margin0 = (newsize - img.shape[0]) // 2
+        margin1 = (newsize - img.shape[1]) // 2
+        new_img[margin0:margin0 + img.shape[0], margin1:margin1 + img.shape[1]] = img
+        img = new_img
     if args.resize:
         if img.shape[0] > img.shape[1]:
             newsize = (args.resize, img.shape[0] * args.resize // img.shape[1])
@@ -328,6 +336,8 @@ def parse_args():
         be packed by default.')
     rgroup.add_argument('--center-crop', action='store_true',
                         help='specify whether to crop the center image to make it rectangular.')
+    rgroup.add_argument('--center-pad', action='store_true',
+                        help='specify whether to pad the whole image to make it rectangular.')
     rgroup.add_argument('--quality', type=int, default=95,
                         help='JPEG quality for encoding, 1-100; or PNG compression for encoding, 1-9')
     rgroup.add_argument('--num-thread', type=int, default=1,

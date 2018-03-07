@@ -88,110 +88,67 @@ if __name__ == "__main__":
         exit(0)
 
     image_dir = args.dir
-    dest_dir = os.path.join(args.dir, "../arrow_val")
-    #
-    # model_net = ModelClassArrow(gpu_id=0)
-    # proc_list = []
-    # file_list = os.listdir(image_dir)
-    # for id_ in file_list:
-    #     name_list = str(id_).split(".")
-    #     if len(name_list) != 2:
-    #         continue
-    #
-    #     name_only = name_list[0]
-    #     name_ext = name_list[1]
-    #     if name_ext != 'png' and name_ext != 'jpg':
-    #         continue
-    #     proc_list.append(id_)
-    #
-    # if not os.path.exists(dest_dir):
-    #     os.makedirs(dest_dir)
-    #
-    # for id_ in proc_list:
-    #     file_path = os.path.join(image_dir, id_)
-    #     dest_path = os.path.join(dest_dir, id_)
-    #
-    #     if os.path.exists(dest_path):
-    #         continue
-    #
-    #     try:
-    #         pred_label = None
-    #         start = time.time()
-    #         with open(file_path, "rb") as f:
-    #             img = f.read()
-    #             pred_label = model_net.do(image_data=img)
-    #         end = time.time()
-    #
-    #         class_id = pred_label[0]
-    #         class_dir = os.path.join(dest_dir, str(class_id))
-    #         if not os.path.exists(class_dir):
-    #             os.makedirs(class_dir)
-    #
-    #         dest_path = os.path.join(class_dir, id_)
-    #         shutil.copy(file_path, dest_path)
-    #         print("Processed {} in {} ms, labels:{}".format(
-    #             dest_path, str((end - start) * 1000),
-    #             str(pred_label))
-    #         )
-    #     except Exception as e:
-    #         print (repr(e))
-    #
-    # time_end = time.time()
-    # print("finish recognition in {} s\n".format(time_end-time_start))
+    dest_dir = os.path.join(args.dir, "../arrow_predict")
 
-    print("start to calculate recall and accuracy...\n")
-    recall_map = {}
-    accuracy_map = {}
+    model_net = ModelClassArrow(gpu_id=0)
+    proc_list = []
 
-    print("loading label...\n")
-    val_csv = os.path.join(image_dir, "ImageType.csv")
-    if not os.path.exists(val_csv):
-        print("label file [{}] is not exist".format(val_csv))
-        exit(0)
-
-    train_csv = os.path.join(image_dir, "../train/ImageType.csv")
-    train_map = {}
-    total_train = 0
-    with open(train_csv, "r") as f:
-        line_str = f.readline()
-        line_str = f.readline()
-        while line_str:
-            line_str = line_str.strip()
-            file_name, class_id = line_str.split(",")
-
-            if int(class_id) not in train_map:
-                train_map[int(class_id)] = 1
-            else:
-                train_map[int(class_id)] += 1
-            total_train += 1
-            line_str = f.readline()
-    print(total_train)
-    print(train_map)
-
+    print("loading test label...\n")
     label_map = {}
     total_val = 0
-    val_map = {}
-    with open(val_csv, "r") as f:
-        line_str = f.readline()
-        line_str = f.readline()
-        while line_str:
-            line_str = line_str.strip()
-            file_name, class_id = line_str.split(",")
-            label_map[file_name] = class_id
+    recall_map = {}
+
+    dir_list = os.listdir(image_dir)
+    for id_dir in dir_list:
+        class_dir = os.path.join(image_dir, id_dir)
+        file_list = os.listdir(class_dir)
+        for file_id in file_list:
+            if not file_id.endswith("jpg"):
+                continue
+
+            proc_list.append(os.path.join(image_dir, id_dir, file_id))
+            class_id = id_dir
+            label_map[file_id] = class_id
+            total_val += 1
 
             if int(class_id) not in recall_map:
                 recall_map[int(class_id)] = {"total": 1}
             else:
                 recall_map[int(class_id)]["total"] += 1
 
-            if int(class_id) not in val_map:
-                val_map[int(class_id)] = 1
-            else:
-                val_map[int(class_id)] += 1
-            total_val += 1
-            line_str = f.readline()
-    print(total_val)
-    print(val_map)
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+
+    for id_ in proc_list:
+        file_path = id_
+
+        try:
+            pred_label = None
+            start = time.time()
+            with open(file_path, "rb") as f:
+                img = f.read()
+                pred_label = model_net.do(image_data=img)
+            end = time.time()
+
+            class_id = pred_label[0]
+            class_dir = os.path.join(dest_dir, str(class_id))
+            if not os.path.exists(class_dir):
+                os.makedirs(class_dir)
+
+            dest_path = os.path.join(class_dir, os.path.basename(id_))
+            shutil.copy(file_path, dest_path)
+            print("Processed {} in {} ms, labels:{}".format(
+                dest_path, str((end - start) * 1000),
+                str(pred_label))
+            )
+        except Exception as e:
+            print (repr(e))
+
+    time_end = time.time()
+    print("finish recognition in {} s\n".format(time_end-time_start))
+
+    print("start to calculate recall and accuracy...\n")
+    accuracy_map = {}
 
     print("loading prediction...\n")
 

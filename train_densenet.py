@@ -114,18 +114,20 @@ def main():
         data_name           = 'data',
         label_name          = 'softmax_label',
         resize              = 256,
-        data_shape          = (3, 112, 112),
+        data_shape          = (3, 224, 224),
+        max_img_size        = 256,
+        min_img_size        = 256,
         batch_size          = args.batch_size,
         pad                 = 0,
         fill_value          = 127,  # only used when pad is valid
         rand_crop           = True,
-        max_random_scale    = 1.0,  # 480 with imagnet and vggface, 384 with msface, 32 with cifar10
-        min_random_scale    = 0.8,  # 256.0/480.0=0.533, 256.0/384.0=0.667
-        max_aspect_ratio    = 0.25,
+        max_random_scale    = 1.1,  # 480 with imagnet and vggface, 384 with msface, 32 with cifar10
+        min_random_scale    = 0.9,  # 256.0/480.0=0.533, 256.0/384.0=0.667
+        max_aspect_ratio    = 0.1,
         random_h            = 0,  # 0.4*90
         random_s            = 0,  # 0.4*127
         random_l            = 0,  # 0.4*127
-        max_rotate_angle    = 10,
+        max_rotate_angle    = 5,
         max_shear_ratio     = 0,
         rand_mirror         = False,
         shuffle             = True,
@@ -138,10 +140,12 @@ def main():
         path_imgrec         = os.path.join(args.data_dir, file_name),
         label_width         = 1,
         resize              = 256,
+        max_img_size        = 256,
+        min_img_size        = 256,
         data_name           = 'data',
         label_name          = 'softmax_label',
         batch_size          = args.batch_size,
-        data_shape          = (3, 112, 112),
+        data_shape          = (3, 224, 224),
         rand_crop           = False,
         rand_mirror         = False,
         num_parts           = kv.num_workers,
@@ -152,7 +156,7 @@ def main():
         symbol              = symbol,
         arg_params          = arg_params,
         aux_params          = aux_params,
-        num_epoch           = 5000,
+        num_epoch           = 8000,
         begin_epoch         = begin_epoch,
         learning_rate       = args.lr,
         momentum            = args.mom,
@@ -160,7 +164,7 @@ def main():
         optimizer           = 'nag',
         # optimizer          = 'sgd',
         initializer         = mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2),
-        lr_scheduler        = multi_factor_scheduler(begin_epoch, epoch_size, step=[100, 1000, 4000], factor=0.1),
+        lr_scheduler        = multi_factor_scheduler(begin_epoch, epoch_size, step=[1000, 3000, 5000], factor=0.1),
     )
 	
     # import pdb
