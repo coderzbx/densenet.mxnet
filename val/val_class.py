@@ -10,6 +10,7 @@ import mxnet as mx
 import time
 import argparse
 import cv2
+from PIL import Image
 from collections import namedtuple
 import shutil
 
@@ -35,8 +36,8 @@ class ModelClassArrow:
         context = [mx.gpu(gpu_id)]
         self.mod = mx.mod.Module(network, context=context)
 
-        self.input_shape = [112, 112]
-        self.mod.bind(for_training=False, data_shapes=[('data', (1, 3, 112, 112))],
+        self.input_shape = [224, 224]
+        self.mod.bind(for_training=False, data_shapes=[('data', (1, 3, 224, 224))],
                  label_shapes=[('softmax_label', (1,))])
         self.mod.init_params(arg_params=net_args,
                         aux_params=net_auxs)
@@ -48,7 +49,16 @@ class ModelClassArrow:
             image = np.asarray(bytearray(image_data), dtype="uint8")
             origin_frame = cv2.imdecode(image, cv2.COLOR_BGR2RGB)
 
-            img = cv2.resize(origin_frame, (224, 224))
+            # pad image
+            img = np.array(Image.fromarray(origin_frame.astype(np.uint8, copy=False)))
+            newsize = max(img.shape[:2])
+            new_img = np.ones((newsize, newsize) + img.shape[2:], np.uint8) * 127
+            margin0 = (newsize - img.shape[0]) // 2
+            margin1 = (newsize - img.shape[1]) // 2
+            new_img[margin0:margin0 + img.shape[0], margin1:margin1 + img.shape[1]] = img
+            img = np.resize(new_img, (3, self.input_shape[1], self.input_shape[0]))
+
+            # img = cv2.resize(origin_frame, (224, 224))
             img = np.swapaxes(img, 0, 2)
             img = np.swapaxes(img, 1, 2)
             img = img[np.newaxis, :]
@@ -90,7 +100,7 @@ if __name__ == "__main__":
     image_dir = args.dir
     dest_dir = os.path.join(args.dir, "../arrow_predict")
 
-    model_net = ModelClassArrow(gpu_id=0)
+    model_net = ModelClassArrow(gpu_id=3)
     proc_list = []
 
     print("loading test label...\n")

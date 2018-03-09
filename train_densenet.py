@@ -164,7 +164,7 @@ def main():
         optimizer           = 'nag',
         # optimizer          = 'sgd',
         initializer         = mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2),
-        lr_scheduler        = multi_factor_scheduler(begin_epoch, epoch_size, step=[1000, 3000, 5000], factor=0.1),
+        lr_scheduler        = multi_factor_scheduler(begin_epoch, epoch_size, step=[765, 1200, 1400], factor=0.1),
     )
 	
     # import pdb
@@ -207,7 +207,7 @@ if __name__ == "__main__":
                         help='level 1: use only random crop and random mirror\n'
                              'level 2: add scale/aspect/hsv augmentation based on level 1\n'
                              'level 3: add rotation/shear augmentation based on level 2')
-    parser.add_argument('--num-examples', type=int, default=40835, help='the number of training examples')
+    parser.add_argument('--num-examples', type=int, default=30001, help='the number of training examples')
     parser.add_argument('--kv-store', type=str, default='device', help='the kvstore type')
     parser.add_argument('--model-load-epoch', type=int, default=0,
                         help='load the model on an epoch using the model-load-prefix')
