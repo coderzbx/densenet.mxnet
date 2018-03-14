@@ -51,7 +51,7 @@ if __name__ == "__main__":
         result_list = []
         if len(file_list) > 5000:
             # shuffle
-            random.seed(100)
+            random.seed(random.random())
             random.shuffle(file_list)
 
             result_list.extend(file_list[:])
@@ -61,10 +61,11 @@ if __name__ == "__main__":
 
             chosen_file = {}
             while len(result_list) < 1000:
-                random.seed(random.random(0, 100))
+                random.seed(random.random())
                 rotate_angle = random.uniform(rotate_range[0], rotate_range[1])
+                print("rotate angle: {}".format(rotate_angle))
 
-                random.seed(random.randint(0, 100))
+                random.seed(random.random())
                 random.shuffle(file_list)
 
                 file_path = file_list[0]

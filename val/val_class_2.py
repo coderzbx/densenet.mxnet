@@ -95,9 +95,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--dir', type=str, required=True)
-    parser.add_argument('--augment', type=str, required=True)
     parser.add_argument('--model', type=str, required=True)
-    parser.add_argument('--result', type=str, required=True)
     args = parser.parse_args()
 
     model_file = args.model
@@ -106,19 +104,18 @@ if __name__ == "__main__":
         exit(0)
 
     image_dir = args.dir
-    augments = args.augment
-    dest_dir = args.result
+    dest_dir = os.path.join(args.dir, "arrow_predict")
 
     model_net = ModelClassArrow(gpu_id=3)
     proc_list = []
 
+    print("loading test label...\n")
     label_map = {}
+    total_val = 0
     recall_map = {}
+
     dir_list = os.listdir(image_dir)
     for id_dir in dir_list:
-        if not id_dir.isdigit():
-            continue
-
         class_dir = os.path.join(image_dir, id_dir)
         file_list = os.listdir(class_dir)
         for file_id in file_list:
@@ -128,26 +125,7 @@ if __name__ == "__main__":
             proc_list.append(os.path.join(image_dir, id_dir, file_id))
             class_id = id_dir
             label_map[file_id] = class_id
-
-            if int(class_id) not in recall_map:
-                recall_map[int(class_id)] = {"total": 1}
-            else:
-                recall_map[int(class_id)]["total"] += 1
-
-    dir_list = os.listdir(augments)
-    for id_dir in dir_list:
-        if not id_dir.isdigit():
-            continue
-
-        class_dir = os.path.join(augments, id_dir)
-        file_list = os.listdir(class_dir)
-        for file_id in file_list:
-            if not file_id.endswith("jpg"):
-                continue
-
-            proc_list.append(os.path.join(augments, id_dir, file_id))
-            class_id = id_dir
-            label_map[file_id] = class_id
+            total_val += 1
 
             if int(class_id) not in recall_map:
                 recall_map[int(class_id)] = {"total": 1}
@@ -157,51 +135,119 @@ if __name__ == "__main__":
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
 
-    result_file = os.path.join(dest_dir, "info.csv")
-    with open(result_file, "w") as f1:
-        f1.write("file,label,predict,score\n")
-        for id_ in proc_list:
-            file_path = id_
+    for id_ in proc_list:
+        file_path = id_
 
-            try:
-                pred_label = None
-                start = time.time()
-                assert os.path.exists(file_path)
-                with open(file_path, "rb") as f:
-                    img = f.read()
-                    pred_label, accuracy = model_net.do(image_data=img)
-                end = time.time()
+        try:
+            pred_label = None
+            start = time.time()
+            assert os.path.exists(file_path)
+            with open(file_path, "rb") as f:
+                img = f.read()
+                pred_label, accuracy = model_net.do(image_data=img)
+            end = time.time()
 
-                class_id = str(pred_label[0])
-                class_acc = accuracy[0]
+            class_id = pred_label[0]
+            class_acc = accuracy[0]
+            class_dir = os.path.join(dest_dir, str(class_id))
+            if not os.path.exists(class_dir):
+                os.makedirs(class_dir)
 
-                label_id = str(os.path.basename(os.path.dirname(id_)))
-                if class_acc < 0.8:
-                    if class_id == label_id:
-                        _dest_dir = os.path.join(dest_dir, "same.low")
-                    else:
-                        _dest_dir = os.path.join(dest_dir, "diff.low")
-                else:
-                    if class_id == label_id:
-                        _dest_dir = os.path.join(dest_dir, "same.high")
-                    else:
-                        _dest_dir = os.path.join(dest_dir, "diff.high")
-
-                class_dir = os.path.join(_dest_dir, str(class_id))
-                if not os.path.exists(class_dir):
-                    os.makedirs(class_dir)
-
-                dest_path = os.path.join(class_dir, os.path.basename(id_))
-                shutil.copy(file_path, dest_path)
-                print("Processed {} in {} ms,\nacc:{}, labels:{} vs. {}".format(
-                    os.path.basename(dest_path), str((end - start) * 1000),
-                    class_acc,
-                    str(pred_label[0]), label_map[os.path.basename(file_path)])
-                )
-                msg = "{},{},{},{}\n".format(os.path.basename(id_), label_id, class_id, class_acc)
-                f1.write(msg)
-            except Exception as e:
-                print (repr(e))
+            dest_path = os.path.join(class_dir, os.path.basename(id_))
+            shutil.copy(file_path, dest_path)
+            print("Processed {} in {} ms,\nacc:{}, labels:{} vs. {}".format(
+                dest_path, str((end - start) * 1000),
+                class_acc,
+                str(pred_label[0]), label_map[os.path.basename(file_path)])
+            )
+        except Exception as e:
+            print (repr(e))
 
     time_end = time.time()
     print("finish recognition in {} s\n".format(time_end-time_start))
+
+    print("start to calculate recall and accuracy...")
+    print("loading prediction...")
+    accuracy_map = {}
+
+    pred_map = {}
+    class_dir_list = os.listdir(dest_dir)
+    for class_dir in class_dir_list:
+        if not str(class_dir).isdigit():
+            continue
+
+        pred_dir = os.path.join(dest_dir, class_dir)
+        pred_list = os.listdir(pred_dir)
+
+        for pred_file in pred_list:
+            if not pred_file.endswith("jpg"):
+                continue
+            pred_map[pred_file] = class_dir
+
+            if int(class_dir) not in accuracy_map:
+                accuracy_map[int(class_dir)] = {"total": 1}
+            else:
+                accuracy_map[int(class_dir)]["total"] += 1
+
+    correct_map = {}
+
+    for image_name, class_id in label_map.items():
+        pred_class = pred_map[image_name]
+
+        if int(class_id) == int(pred_class):
+            if int(class_id) not in correct_map:
+                correct_map[int(class_id)] = 1
+            else:
+                correct_map[int(class_id)] += 1
+
+    print("start to calculate recall and accuracy...")
+
+    for class_id, count in correct_map.items():
+        recall_map[class_id]["correct"] = count
+        recall_map[class_id]["rate"] = float(count) / float(recall_map[class_id]["total"]) * 100
+
+        accuracy_map[class_id]["correct"] = count
+        accuracy_map[class_id]["rate"] = float(count) / float(accuracy_map[class_id]["total"]) * 100
+
+    # for class_id, info in recall_map.items():
+    #     label_name = name_dict[class_id]
+    #     print(label_name.encode("UTF-8"))
+    #     print("recall:id:{},info:{}".format(class_id, json.dumps(info)))
+
+    # for class_id, info in accuracy_map.items():
+    #     label_name = name_dict[class_id]
+    #     print(label_name.encode("UTF-8"))
+    #     print("accuracy:id:{},info:{}".format(class_id, json.dumps(info)))
+
+    # format
+    print("recall, id, rate, correct/total")
+    for class_id, info in recall_map.items():
+        rate = 0
+        if 'rate' in info:
+            rate = info['rate']
+        correct = 0
+        if 'correct' in info:
+            correct = info['correct']
+        total = 0
+        if 'total' in info:
+            total = info['total']
+
+        label_name = name_dict[class_id]
+        print(label_name.encode("UTF-8"))
+        print("{},{},{}/{}".format(class_id, rate, correct, total))
+
+    print("\naccuracy, id, rate, correct/total")
+    for class_id, info in accuracy_map.items():
+        rate = 0
+        if 'rate' in info:
+            rate = info['rate']
+        correct = 0
+        if 'correct' in info:
+            correct = info['correct']
+        total = 0
+        if 'total' in info:
+            total = info['total']
+
+        label_name = name_dict[class_id]
+        print(label_name.encode("UTF-8"))
+        print("{},{},{}/{}".format(class_id, rate, correct, total))
