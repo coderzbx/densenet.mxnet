@@ -51,7 +51,7 @@ if __name__ == "__main__":
                 continue
             augments_map[file_id] = int(dir_)
 
-    check_dir = args.check_dir
+    check_dir = args.check
     if not os.path.exists(check_dir):
         print("dir:{} not exist".format(check_dir))
         exit(0)
@@ -92,6 +92,14 @@ if __name__ == "__main__":
 
                 shutil.move(src=src_path, dst=dest_path)
         else:
+            dest_path = os.path.join(src_dir, str(class_id), image_name)
+            dirs = ['same.low', 'diff.high', 'diff.low']
+            for dir_ in dirs:
+                src_path = os.path.join(check_dir, dir_, image_name)
+                if os.path.exists(src_path):
+                    shutil.copy(src=src_path, dst=dest_path)
+                    break
+
             print(image_name)
 
     end_t = time.time()
