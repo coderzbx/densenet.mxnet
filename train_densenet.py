@@ -207,7 +207,7 @@ if __name__ == "__main__":
                         help='level 1: use only random crop and random mirror\n'
                              'level 2: add scale/aspect/hsv augmentation based on level 1\n'
                              'level 3: add rotation/shear augmentation based on level 2')
-    parser.add_argument('--num-examples', type=int, default=30001, help='the number of training examples')
+    parser.add_argument('--num-examples', type=int, default=50204, help='the number of training examples')
     parser.add_argument('--kv-store', type=str, default='device', help='the kvstore type')
     parser.add_argument('--model-load-epoch', type=int, default=0,
                         help='load the model on an epoch using the model-load-prefix')

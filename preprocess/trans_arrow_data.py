@@ -155,7 +155,7 @@ def make_list_dir(args):
     # image_list = list_image(args.root, args.recursive, args.exts)
     image_list = list(image_list)
     if args.shuffle is True:
-        random.seed(100)
+        random.seed(random.randint(0, 100))
         random.shuffle(image_list)
     N = len(image_list)
     chunk_size = (N + args.chunks - 1) // args.chunks
@@ -301,6 +301,12 @@ def write_worker(q_out, fname, working_dir):
 
 
 def parse_args():
+    # python /opt/densenet.mxnet/preprocess/trans_arrow_data.py
+    # /data/deeplearning/dataset/arrow/data_0315
+    # /data/deeplearning/dataset/arrow/label_0314
+    # --train-ratio=0.78
+    # --test-ratio=0.07
+    # --center-pad
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description='Create an image list or \

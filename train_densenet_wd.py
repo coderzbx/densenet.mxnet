@@ -136,6 +136,9 @@ def main():
     )
 
     file_name = args.val_prefix + ".rec"
+    step = args.step
+    step = str(step).split(",")
+    step = [int(i) for i in step]
     val = mx.io.ImageRecordIter(
         path_imgrec         = os.path.join(args.data_dir, file_name),
         label_width         = 1,
@@ -164,7 +167,7 @@ def main():
         optimizer           = 'nag',
         # optimizer          = 'sgd',
         initializer         = mx.init.Xavier(rnd_type='gaussian', factor_type="in", magnitude=2),
-        lr_scheduler        = multi_factor_scheduler(begin_epoch, epoch_size, step=[400, 600, 700], factor=0.1),
+        lr_scheduler        = multi_factor_scheduler(begin_epoch, epoch_size, step=step, factor=0.1),
     )
 	
     # import pdb
@@ -183,6 +186,13 @@ def main():
     #               eval_metric = ['acc', mx.metric.create('top_k_accuracy', top_k = 5)])))
 
 if __name__ == "__main__":
+    # nohup python -u /opt/densenet.mxnet/train_densenet_wd.py
+    # --gpus=1,2,3,4,5
+    # --log=/data/deeplearning/dataset/arrow/log/train_20180315.log
+    # --train_prefix=/data/deeplearning/dataset/arrow/record/data_0315_train
+    # --val_prefix=/data/deeplearning/dataset/arrow/record/data_0315_val
+    # --model_prefix=/data/deeplearning/dataset/arrow/models/model_0315
+    # --batch-size=64 --depth=169 &
     parser = argparse.ArgumentParser(description="command for training DenseNet-BC")
     parser.add_argument('--gpus', type=str, default='0', help='the gpus will be used, e.g "0,1,2,3"')
     parser.add_argument('--data-dir', type=str, default='/data/deeplearning/dataset/label_arrow/training/', help='the input data directory')
@@ -191,12 +201,14 @@ if __name__ == "__main__":
     parser.add_argument('--train_prefix', type=str, default='', help='list file name')
     parser.add_argument('--model_prefix', type=str, default='', help='list model name')
     parser.add_argument('--val_prefix', type=str, default='', help='list file name')
+    parser.add_argument('--step', type=str, default='400,600,1000', help='step size to change lr')
     parser.add_argument('--lr', type=float, default=0.1, help='initialization learning reate')
     parser.add_argument('--mom', type=float, default=0.9, help='momentum for sgd')
     parser.add_argument('--bn-mom', type=float, default=0.9, help='momentum for batch normlization')
-    parser.add_argument('--wd', type=float, default=0.001, help='weight decay for sgd')
+    parser.add_argument('--wd', type=float, default=0.0005, help='weight decay for sgd')
+    parser.add_argument('--log', type=str, default="/data/deeplearning/dataset/arrow/log/", help='log path')
     parser.add_argument('--batch-size', type=int, default=256, help='the batch size')
-    parser.add_argument('--growth-rate', type=int, default=48, help='the growth rate of DenseNet')
+    parser.add_argument('--growth-rate', type=int, default=32, help='the growth rate of DenseNet')
     parser.add_argument('--drop-out', type=float, default=0.3, help='the probability of an element to be zeroed')
     parser.add_argument('--reduction', type=float, default=0.5, help='the compression ratio for TransitionBlock')
     parser.add_argument('--workspace', type=int, default=512, help='memory space size(MB) used in convolution, if xpu '
@@ -207,16 +219,18 @@ if __name__ == "__main__":
                         help='level 1: use only random crop and random mirror\n'
                              'level 2: add scale/aspect/hsv augmentation based on level 1\n'
                              'level 3: add rotation/shear augmentation based on level 2')
-    parser.add_argument('--num-examples', type=int, default=30001, help='the number of training examples')
+    parser.add_argument('--num-examples', type=int, default=50204, help='the number of training examples')
     parser.add_argument('--kv-store', type=str, default='device', help='the kvstore type')
     parser.add_argument('--model-load-epoch', type=int, default=0,
                         help='load the model on an epoch using the model-load-prefix')
     parser.add_argument('--frequent', type=int, default=50, help='frequency of logging')
     parser.add_argument('--retrain', action='store_true', default=False, help='true means continue training')
     args = parser.parse_args()
-    if not os.path.exists("./log"):
-        os.mkdir("./log")
-    hdlr = logging.FileHandler('./log/log-densenet-{}-{}-{}.log'.format(args.data_type, args.depth, args.train_prefix))
+    # if not os.path.exists("./log"):
+    #     os.mkdir("./log")
+    log_file = args.log
+    # hdlr = logging.FileHandler('./log/log-densenet-{}-{}-{}.log'.format(args.data_type, args.depth, args.train_prefix))
+    hdlr = logging.FileHandler(log_file)
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
     logging.info(args)
