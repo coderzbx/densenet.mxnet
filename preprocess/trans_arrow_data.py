@@ -155,7 +155,7 @@ def make_list_dir(args):
     # image_list = list_image(args.root, args.recursive, args.exts)
     image_list = list(image_list)
     if args.shuffle is True:
-        random.seed(random.randint(0, 100))
+        random.seed(random.random())
         random.shuffle(image_list)
     N = len(image_list)
     chunk_size = (N + args.chunks - 1) // args.chunks
@@ -232,10 +232,10 @@ def image_encode(args, i, item, q_out):
         return
     if args.center_crop:
         if img.shape[0] > img.shape[1]:
-            margin = (img.shape[0] - img.shape[1]) // 2;
+            margin = (img.shape[0] - img.shape[1]) // 2
             img = img[margin:margin + img.shape[1], :]
         else:
-            margin = (img.shape[1] - img.shape[0]) // 2;
+            margin = (img.shape[1] - img.shape[0]) // 2
             img = img[:, margin:margin + img.shape[0]]
     if args.center_pad:
         newsize = max(img.shape[:2])

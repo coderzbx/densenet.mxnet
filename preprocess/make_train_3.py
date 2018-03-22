@@ -22,6 +22,8 @@ if __name__ == "__main__":
     train_dir = args.train_dir
     val_dir = args.val_dir
 
+    rotate_range = [-10, 10]
+
     if not os.path.exists(label_dir):
         print("dir[{}] is not exist".format(label_dir))
         exit(0)
@@ -47,10 +49,23 @@ if __name__ == "__main__":
                 continue
 
         result_list = []
-        if len(file_list) >= 1000:
+        val_list = []
+        if len(file_list) > 5000:
             random.seed(random.randint(0, 100))
             random.shuffle(file_list)
-            result_list.extend([os.path.join(class_dir, file_id) for file_id in file_list[:]])
+            result_list.extend([os.path.join(class_dir, file_id) for file_id in file_list[:5000]])
+            if len(file_list) >= 5200:
+                val_list.extend([os.path.join(class_dir, file_id) for file_id in file_list[5000:5200]])
+            else:
+                val_list.extend([os.path.join(class_dir, file_id) for file_id in file_list[5000:]])
+        elif len(file_list) >= 1000:
+            # result_list.extend([os.path.join(class_dir, file_id) for file_id in file_list[0:1000]])
+            if len(file_list) >= 1200:
+                result_list.extend([os.path.join(class_dir, file_id) for file_id in file_list[0:-200]])
+                val_list.extend([os.path.join(class_dir, file_id) for file_id in file_list[-200:]])
+            else:
+                result_list.extend([os.path.join(class_dir, file_id) for file_id in file_list[0:1000]])
+                val_list.extend([os.path.join(class_dir, file_id) for file_id in file_list[1000:]])
         else:
             # label
             result_list.extend([os.path.join(class_dir, file_id) for file_id in file_list])
@@ -64,7 +79,18 @@ if __name__ == "__main__":
                     continue
             result_list.extend([os.path.join(rotate_class_dir, rotate_id) for rotate_id in rotate_list])
 
+            if len(result_list) > 1000:
+                random.seed(random.randint(0, 200))
+                random.shuffle(result_list)
+
+                if len(result_list) >= 1200:
+                    val_list.extend(result_list[-200:])
+                else:
+                    val_list.extend(result_list[1000:])
+                result_list = result_list[0:1000]
+
         print("train-class:{}, count:{}".format(class_id, len(result_list)))
+        print("val-class:{}, count:{}".format(class_id, len(val_list)))
 
         for result_id in result_list:
             train_class_dir = os.path.join(train_dir, class_id)
@@ -73,6 +99,15 @@ if __name__ == "__main__":
 
             result_path = os.path.join(train_class_dir, os.path.basename(result_id))
             shutil.copy(result_id, result_path)
+
+        # validation
+        for val_id in val_list:
+            val_class_dir = os.path.join(val_dir, class_id)
+            if not os.path.exists(val_class_dir):
+                os.makedirs(val_class_dir)
+
+            result_path = os.path.join(val_class_dir, os.path.basename(val_id))
+            shutil.copy(val_id, result_path)
 
     time_end = time.time()
     print("finish in {} s".format(time_end - time_start))

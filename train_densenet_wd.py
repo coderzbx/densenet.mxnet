@@ -109,7 +109,7 @@ def main():
     file_name = args.train_prefix + ".rec"
 
     train = mx.io.ImageRecordIter(
-        path_imgrec         = os.path.join(args.data_dir, file_name),
+        path_imgrec         = file_name,
         label_width         = 1,
         data_name           = 'data',
         label_name          = 'softmax_label',
@@ -140,7 +140,7 @@ def main():
     step = str(step).split(",")
     step = [int(i) for i in step]
     val = mx.io.ImageRecordIter(
-        path_imgrec         = os.path.join(args.data_dir, file_name),
+        path_imgrec         = file_name,
         label_width         = 1,
         resize              = 256,
         max_img_size        = 256,
@@ -159,7 +159,7 @@ def main():
         symbol              = symbol,
         arg_params          = arg_params,
         aux_params          = aux_params,
-        num_epoch           = 5000,
+        num_epoch           = 1000,
         begin_epoch         = begin_epoch,
         learning_rate       = args.lr,
         momentum            = args.mom,
@@ -195,13 +195,11 @@ if __name__ == "__main__":
     # --batch-size=64 --depth=169 &
     parser = argparse.ArgumentParser(description="command for training DenseNet-BC")
     parser.add_argument('--gpus', type=str, default='0', help='the gpus will be used, e.g "0,1,2,3"')
-    parser.add_argument('--data-dir', type=str, default='/data/deeplearning/dataset/label_arrow/training/', help='the input data directory')
     parser.add_argument('--data-type', type=str, default='kd', help='the dataset type')
-    parser.add_argument('--list-dir', type=str, default='/data/deeplearning/dataset/label_arrow/training/', help='the directory which contain the training list file')
     parser.add_argument('--train_prefix', type=str, default='', help='list file name')
     parser.add_argument('--model_prefix', type=str, default='', help='list model name')
     parser.add_argument('--val_prefix', type=str, default='', help='list file name')
-    parser.add_argument('--step', type=str, default='400,600,1000', help='step size to change lr')
+    parser.add_argument('--step', type=str, default='100,300,500', help='step size to change lr')
     parser.add_argument('--lr', type=float, default=0.1, help='initialization learning reate')
     parser.add_argument('--mom', type=float, default=0.9, help='momentum for sgd')
     parser.add_argument('--bn-mom', type=float, default=0.9, help='momentum for batch normlization')
@@ -219,7 +217,7 @@ if __name__ == "__main__":
                         help='level 1: use only random crop and random mirror\n'
                              'level 2: add scale/aspect/hsv augmentation based on level 1\n'
                              'level 3: add rotation/shear augmentation based on level 2')
-    parser.add_argument('--num-examples', type=int, default=50204, help='the number of training examples')
+    parser.add_argument('--num-examples', type=int, default=0, help='the number of training examples')
     parser.add_argument('--kv-store', type=str, default='device', help='the kvstore type')
     parser.add_argument('--model-load-epoch', type=int, default=0,
                         help='load the model on an epoch using the model-load-prefix')

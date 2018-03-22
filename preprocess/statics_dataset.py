@@ -30,32 +30,19 @@ def parse_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description='Create an image list or \
         make a record database by reading from an image list')
-    parser.add_argument('--prefix', help='prefix of input/output lst and rec files.', required=True)
-    parser.add_argument('--root', help='path to folder containing images.', required=True)
+    parser.add_argument('--list', help='prefix of input/output lst and rec files.', required=True)
 
     args = parser.parse_args()
-    args.prefix = os.path.abspath(args.prefix)
-    args.root = os.path.abspath(args.root)
     return args
 
 if __name__ == "__main__":
     logger = logging.getLogger()
     args = parse_args()
-    working_dir = args.root
-
     start_time = time.time()
 
-    files = [os.path.join(working_dir, fname) for fname in os.listdir(working_dir)
-             if os.path.isfile(os.path.join(working_dir, fname))]
     count = 0
 
-    lst_file = None
-    for fname in files:
-        if fname.startswith(args.prefix) and fname.endswith('.lst'):
-            lst_file = fname
-
-    if lst_file is None:
-        exit(0)
+    lst_file = args.list
 
     image_list = read_list(lst_file)
     image_list = list(image_list)

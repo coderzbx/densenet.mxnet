@@ -51,7 +51,7 @@ class ModelClassArrow:
         try:
             image = np.asarray(bytearray(image_data), dtype="uint8")
             img = cv2.imdecode(image, cv2.IMREAD_COLOR)
-            print "original img size:", img.shape
+            # print "original img size:", img.shape
 
             # pad image
             # img = np.array(Image.fromarray(origin_frame.astype(np.uint8, copy=False)))
@@ -62,7 +62,7 @@ class ModelClassArrow:
             new_img[margin0:margin0 + img.shape[0], margin1:margin1 + img.shape[1]] = img
             # img: (256, 256, 3), GBR format, HWC
             img = cv2.resize(new_img, tuple(self.input_shape))
-            print "resized img size:", img.shape
+            # print "resized img size:", img.shape
 
             img = img.transpose(2, 0, 1)
             img = img[np.newaxis, :]
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     image_dir = args.dir
     dest_dir = os.path.join(args.dir, "arrow_predict")
 
-    model_net = ModelClassArrow(gpu_id=3)
+    model_net = ModelClassArrow(gpu_id=0)
     proc_list = []
 
     print("loading test label...\n")
@@ -147,6 +147,10 @@ if __name__ == "__main__":
                 pred_label, accuracy = model_net.do(image_data=img)
             end = time.time()
 
+            if accuracy[0] < 0.95:
+                class_id = 0
+            else:
+                class_id = pred_label[0]
             class_id = pred_label[0]
             class_acc = accuracy[0]
             class_dir = os.path.join(dest_dir, str(class_id))
@@ -155,10 +159,9 @@ if __name__ == "__main__":
 
             dest_path = os.path.join(class_dir, os.path.basename(id_))
             shutil.copy(file_path, dest_path)
-            print("Processed {} in {} ms,\nacc:{}, labels:{} vs. {}".format(
-                dest_path, str((end - start) * 1000),
-                class_acc,
-                str(pred_label[0]), label_map[os.path.basename(file_path)])
+            print("Processed {} in {} ms,acc:{}, labels:{} vs. {}".format(
+                os.path.basename(dest_path), str((end - start) * 1000),
+                class_acc, str(pred_label[0]), label_map[os.path.basename(file_path)])
             )
         except Exception as e:
             print (repr(e))
