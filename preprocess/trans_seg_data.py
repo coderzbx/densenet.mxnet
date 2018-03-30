@@ -29,9 +29,6 @@ import numpy as np
 import time
 import traceback
 
-from class_map import arrow_labels_v1
-from class_map import arrow_labels_v2
-
 try:
     import multiprocessing
 except ImportError:
@@ -64,94 +61,43 @@ def list_image(root, recursive, exts):
                 i += 1
 
 
-def write_list(path_out, image_list):
-    # image_index, real_path, str(map_id)
+def write_list(path_out, image_list, rec_image_list):
     with open(path_out, 'w') as fout:
         for i, item in enumerate(image_list):
             line = '%d\t' % item[0]
             for j in item[2:]:
                 line += '{}\t'.format(j)
-            line += '%s\n' % item[1]
+            label = rec_image_list[item[1]]
+            line += '{}\t{}\n'.format(item[1], label)
             fout.write(line)
 
 
-def make_list(args):
-    class_id_map = {label.id: label.categoryId for label in arrow_labels_v2}
-
-    image_list = []
-    image_index = 0
-
-    dir_path = args.root
-    label_file = os.path.join(dir_path, "ImageType.csv")
-    if not os.path.exists(label_file):
-        return
-
-    with open(label_file, "r") as f:
-        line_str = f.readline()
-        # skip first line
-        line_str = f.readline()
-        while line_str:
-            line_str = line_str.strip()
-            file_name, class_id = line_str.split(",")
-            real_path = os.path.join(dir_path, file_name)
-
-            class_id = int(class_id)
-            map_id = class_id_map[class_id]
-
-            if class_id > 1 or map_id > 1:
-                print("wait")
-
-            image_list.append((image_index, real_path, str(map_id)))
-
-            image_index += 1
-            line_str = f.readline()
-
-    # image_list = list_image(args.root, args.recursive, args.exts)
-    image_list = list(image_list)
-    if args.shuffle is True:
-        random.seed(100)
-        random.shuffle(image_list)
-    N = len(image_list)
-    chunk_size = (N + args.chunks - 1) // args.chunks
-    for i in range(args.chunks):
-        chunk = image_list[i * chunk_size:(i + 1) * chunk_size]
-        if args.chunks > 1:
-            str_chunk = '_%d' % i
-        else:
-            str_chunk = ''
-        sep = int(chunk_size * args.train_ratio)
-        sep_test = int(chunk_size * args.test_ratio)
-        if args.train_ratio == 1.0:
-            write_list(args.prefix + str_chunk + '.lst', chunk)
-        else:
-            if args.test_ratio:
-                write_list(args.prefix + str_chunk + '_test.lst', chunk[:sep_test])
-            if args.train_ratio + args.test_ratio < 1.0:
-                write_list(args.prefix + str_chunk + '_val.lst', chunk[sep_test + sep:])
-            write_list(args.prefix + str_chunk + '_train.lst', chunk[sep_test:sep_test + sep])
-
-
 def make_list_dir(args):
-    class_id_map = {label.id: label.categoryId for label in arrow_labels_v2}
-
+    image_label_map = {}
     image_list = []
-    image_index = 0
 
     dir_path = args.root
+    image_index = 0
 
-    class_dir_list = os.listdir(dir_path)
-    for class_id in class_dir_list:
-        file_list = os.listdir(os.path.join(dir_path, class_id))
+    package_dir_list = os.listdir(dir_path)
+    for package_id in package_dir_list:
+        if not package_id.isdigit():
+            continue
+
+        file_list = os.listdir(os.path.join(dir_path, package_id))
         for file_id in file_list:
-            if len(file_id) < 4 or file_id[-3:] not in ['jpg', 'png']:
+            if file_id.startswith("label") or file_id.endswith("png"):
                 continue
 
-            real_path = os.path.join(dir_path, class_id, file_id)
-            class_num = int(class_id)
-            map_id = class_id_map[class_num]
-
-            image_list.append((image_index, real_path, str(map_id)))
-            image_index += 1
+            image_path = os.path.join(dir_path, package_id, file_id)
+            if file_id.endswith("jpg"):
+                label_path = image_path[:-3] + "png"
+                if os.path.exists(label_path):
+                    image_list.append((image_index, image_path, "0"))
+                    image_index += 1
+                    image_label_map[image_path] = label_path
+                else:
+                    print(image_path)
 
     # image_list = list_image(args.root, args.recursive, args.exts)
     image_list = list(image_list)
@@ -169,13 +115,13 @@ def make_list_dir(args):
         sep = int(chunk_size * args.train_ratio)
         sep_test = int(chunk_size * args.test_ratio)
         if args.train_ratio == 1.0:
-            write_list(args.prefix + str_chunk + '.lst', chunk)
+            write_list(args.prefix + str_chunk + '.lst', chunk, image_label_map)
         else:
             if args.test_ratio:
-                write_list(args.prefix + str_chunk + '_test.lst', chunk[:sep_test])
+                write_list(args.prefix + str_chunk + '_test.lst', chunk[:sep_test], image_label_map)
             if args.train_ratio + args.test_ratio < 1.0:
-                write_list(args.prefix + str_chunk + '_val.lst', chunk[sep_test + sep:])
-            write_list(args.prefix + str_chunk + '_train.lst', chunk[sep_test:sep_test + sep])
+                write_list(args.prefix + str_chunk + '_val.lst', chunk[sep_test + sep:], image_label_map)
+            write_list(args.prefix + str_chunk + '_train.lst', chunk[sep_test:sep_test + sep], image_label_map)
 
 
 def read_list(path_in):
@@ -186,11 +132,11 @@ def read_list(path_in):
                 break
             line = [i.strip() for i in line.strip().split('\t')]
             line_len = len(line)
-            if line_len < 3:
+            if line_len < 4:
                 print('lst should at least has three parts, but only has %s parts for %s' %(line_len, line))
                 continue
             try:
-                item = [int(line[0])] + [line[-1]] + [float(i) for i in line[1:-1]]
+                item = [int(line[0])] + [float(line[1])] + [i for i in line[2:]]
             except Exception as e:
                 print('Parsing lst met error for %s, detail: %s' %(line, e))
                 continue
@@ -198,21 +144,36 @@ def read_list(path_in):
 
 
 def image_encode(args, i, item, q_out):
-    fullpath = os.path.join(args.root, item[1])
+    fullpath = item[2]
 
     if not os.path.exists(fullpath):
         print(fullpath)
 
     if len(item) > 3 and args.pack_label:
-        header = mx.recordio.IRHeader(0, item[2:], item[0], 0)
+        header = mx.seg_recordio.ISegRHeader(0, 0, item[0], 0)
     else:
-        header = mx.recordio.IRHeader(0, item[2], item[0], 0)
+        header = mx.seg_recordio.ISegRHeader(0, 0, item[0], 0)
 
     if args.pass_through:
         try:
-            with open(fullpath, 'rb') as fin:
-                img = fin.read()
-            s = mx.recordio.pack(header, img)
+            image = cv2.imread(fullpath, cv2.IMREAD_COLOR)
+            label_path = item[-1]
+            label = cv2.imread(label_path, cv2.IMREAD_GRAYSCALE)
+
+            width = image.shape[1]
+            height = image.shape[0]
+            image_label = np.zeros((height, width, 4), np.uint8)
+
+            image_label[0:height, 0:width, 0] = image[0:height, 0:width, 0]
+            image_label[0:height, 0:width, 1] = image[0:height, 0:width, 1]
+            image_label[0:height, 0:width, 2] = image[0:height, 0:width, 2]
+            image_label[0:height, 0:width, 3] = label[0:height, 0:width]
+
+            img_array = cv2.imencode('.png', image_label)
+            img_data = img_array[1]
+            image_label = img_data.tostring()
+
+            s = mx.seg_recordio.pack(header, image_label)
             q_out.put((i, s, item))
         except Exception as e:
             traceback.print_exc()
@@ -221,7 +182,20 @@ def image_encode(args, i, item, q_out):
         return
 
     try:
-        img = cv2.imread(fullpath, args.color)
+        img = cv2.imread(fullpath, cv2.IMREAD_COLOR)
+        label_path = item[-1]
+        label = cv2.imread(label_path, cv2.IMREAD_GRAYSCALE)
+
+        width = img.shape[1]
+        height = img.shape[0]
+        image_label = np.zeros((height, width, 4), np.uint8)
+
+        image_label[0:height, 0:width, 0] = img[0:height, 0:width, 0]
+        image_label[0:height, 0:width, 1] = img[0:height, 0:width, 1]
+        image_label[0:height, 0:width, 2] = img[0:height, 0:width, 2]
+        image_label[0:height, 0:width, 3] = label[0:height, 0:width]
+
+        img = image_label
     except:
         traceback.print_exc()
         print('imread error trying to load file: %s ' % fullpath)
@@ -253,7 +227,7 @@ def image_encode(args, i, item, q_out):
         img = cv2.resize(img, newsize)
 
     try:
-        s = mx.recordio.pack_img(header, img, quality=args.quality, img_fmt=args.encoding)
+        s = mx.seg_recordio.pack_img(header, img, quality=args.quality, img_fmt=args.encoding)
         q_out.put((i, s, item))
     except Exception as e:
         traceback.print_exc()
@@ -277,7 +251,7 @@ def write_worker(q_out, fname, working_dir):
     fname = os.path.basename(fname)
     fname_rec = os.path.splitext(fname)[0] + '.rec'
     fname_idx = os.path.splitext(fname)[0] + '.idx'
-    record = mx.recordio.MXIndexedRecordIO(os.path.join(working_dir, fname_idx),
+    record = mx.seg_recordio.MXIndexedSegRecordIO(os.path.join(working_dir, fname_idx),
                                            os.path.join(working_dir, fname_rec), 'w')
     buf = {}
     more = True
@@ -294,7 +268,7 @@ def write_worker(q_out, fname, working_dir):
             if s is not None:
                 record.write_idx(item[0], s)
 
-            if count % 1000 == 0:
+            if count % 100 == 0:
                 cur_time = time.time()
                 print('time:', cur_time - pre_time, ' count:', count)
                 pre_time = cur_time
@@ -351,12 +325,12 @@ def parse_args():
                         help='number of thread to use for encoding. order of images will be different\
         from the input list if >1. the input list will be modified to match the\
         resulting order.')
-    rgroup.add_argument('--color', type=int, default=1, choices=[-1, 0, 1],
+    rgroup.add_argument('--color', type=int, default=-1, choices=[-1, 0, 1],
                         help='specify the color mode of the loaded image.\
         1: Loads a color image. Any transparency of image will be neglected. It is the default flag.\
         0: Loads image in grayscale mode.\
         -1:Loads image as such including alpha channel.')
-    rgroup.add_argument('--encoding', type=str, default='.jpg', choices=['.jpg', '.png'],
+    rgroup.add_argument('--encoding', type=str, default='.png', choices=['.jpg', '.png'],
                         help='specify the encoding of the images.')
     rgroup.add_argument('--pack-label', action='store_true',
         help='Whether to also pack multi dimensional label in the record file')
@@ -413,7 +387,7 @@ if __name__ == '__main__':
                     fname = os.path.basename(fname)
                     fname_rec = os.path.splitext(fname)[0] + '.rec'
                     fname_idx = os.path.splitext(fname)[0] + '.idx'
-                    record = mx.recordio.MXIndexedRecordIO(os.path.join(working_dir, fname_idx),
+                    record = mx.seg_recordio.MXIndexedSegRecordIO(os.path.join(working_dir, fname_idx),
                                                            os.path.join(working_dir, fname_rec), 'w')
                     cnt = 0
                     pre_time = time.time()
@@ -423,7 +397,7 @@ if __name__ == '__main__':
                             continue
                         _, s, _ = q_out.get()
                         record.write_idx(item[0], s)
-                        if cnt % 1000 == 0:
+                        if cnt % 100 == 0:
                             cur_time = time.time()
                             print('time:', cur_time - pre_time, ' count:', cnt)
                             pre_time = cur_time
