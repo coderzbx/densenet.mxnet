@@ -1,6 +1,6 @@
 # -*-coding:utf-8-*-
 
-from mxnet.io import ImageSegRecordIter
+from mxnet.io import ImageRecordIter
 import os
 import cv2
 import time
@@ -40,8 +40,8 @@ self_road_chn_labels = {
     Label('objects',        25, 25,   (255, 165, 0),      u'车道标线-黄色'),
 }
 
-data_iter = ImageSegRecordIter(
-    path_imgrec = "/data/deeplearning/dataset/training/seg_data.rec",
+data_iter = ImageRecordIter(
+    path_imgrec = "/data/deeplearning/dataset/training/seg_det_data.rec",
     # path_imglist="/data/deeplearning/dataset/training/seg_data.lst",
     # label_width=1,
     data_name='data',
@@ -85,26 +85,26 @@ while next_batch:
     # print("provide_label:{}".format(data_iter.provide_label[i].shape))
     # print("label:{}".format(data_label.shape))
     # print("data:{}".format(data.shape))
-    _label = data_label[i].asnumpy().astype(np.uint8)
-    cv2.imwrite("./test_batch/{}.png".format(image_index), _label)
-    # label
-    height = _label.shape[0]
-    width = _label.shape[1]
-    blank_image = np.zeros((height, width, 3), np.uint8)
-    for label in self_road_chn_labels:
-        color = label.color
-        color = (color[2], color[1], color[0])
-        # color = color[::-1]
-        blank_image[np.where((_label == label.id))] = color
-    cv2.imwrite("./test_batch/{}-label.png".format(image_index), blank_image)
-
-    image_label = data[i].asnumpy().astype(np.uint8).transpose(1, 2, 0)
-    # image = image_label[:, :, 0:3]
-    image = image_label[:, :, ::-1]
-    cv2.imwrite("./test_batch/{}.jpg".format(image_index), image)
-
-    end = time.time()
-    print("batch-{} in {}s".format(image_index, (end - start)))
+    # _label = data_label[i].asnumpy().astype(np.uint8)
+    # cv2.imwrite("./test_batch/{}.png".format(image_index), _label)
+    # # label
+    # height = _label.shape[0]
+    # width = _label.shape[1]
+    # blank_image = np.zeros((height, width, 3), np.uint8)
+    # for label in self_road_chn_labels:
+    #     color = label.color
+    #     color = (color[2], color[1], color[0])
+    #     # color = color[::-1]
+    #     blank_image[np.where((_label == label.id))] = color
+    # cv2.imwrite("./test_batch/{}-label.png".format(image_index), blank_image)
+    #
+    # image_label = data[i].asnumpy().astype(np.uint8).transpose(1, 2, 0)
+    # # image = image_label[:, :, 0:3]
+    # image = image_label[:, :, ::-1]
+    # cv2.imwrite("./test_batch/{}.jpg".format(image_index), image)
+    #
+    # end = time.time()
+    # print("batch-{} in {}s".format(image_index, (end - start)))
 
     next_batch = data_iter.iter_next()
     batch_end = time.time()
