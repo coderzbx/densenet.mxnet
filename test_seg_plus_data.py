@@ -47,22 +47,31 @@ data_iter = ImageSegRecordIter(
     # label_width=1,
     data_name='data',
     label_name='softmax_label',
-    data_shape=(3, 512, 512),
+    data_shape=(3, 400, 400),
     batch_size=batch_size,
-    preprocess_threads=batch_size,
+    preprocess_threads=20,
     # resize=512,
     pad=0,
     fill_value=255,  # only used when pad is valid
     rand_crop=True,
-    max_random_scale=0.7,  # 480 with imagnet and vggface, 384 with msface, 32 with cifar10
-    min_random_scale=0.5,  # 256.0/480.0=0.533, 256.0/384.0=0.667
-    max_aspect_ratio=0.5,
-    random_h=0,  # 0.4*90
-    random_s=0,  # 0.4*127
-    random_l=0,  # 0.4*127
+    # max_random_scale=0.7,
+    # min_random_scale=0.5,
+    # max_aspect_ratio=0.4,
+    max_random_scale=0.65,
+    min_random_scale=0.4,
+    max_aspect_ratio=0.45,
+    # max_random_scale=1.0,
+    # min_random_scale=1.0,
+    # max_aspect_ratio=0,
+    random_h=0,
+    random_s=0,
+    random_l=0,
     max_rotate_angle=0,
     max_shear_ratio=0,
-    rand_mirror=False,
+    rand_mirror=True,
+    rand_mirror_prob=0.4,
+    left_lane_id=3,
+    right_lane_id=4,
     shuffle=False,
 )
 
@@ -70,9 +79,10 @@ data_iter.reset()
 next_batch = data_iter.iter_next()
 image_index = 0
 batch_index = 0
+save_image = False
 
-if not os.path.exists("./test_plus_batch"):
-    os.makedirs("./test_plus_batch")
+if not os.path.exists("/opt/densenet.mxnet/test_plus_batch"):
+    os.makedirs("/opt/densenet.mxnet/test_plus_batch")
 
 while next_batch:
     data_iter.next()
@@ -83,7 +93,7 @@ while next_batch:
     data_label = data_iter.getlabel()
     data = data_iter.getdata()
 
-    if batch_index == 0:
+    if batch_index == 0 and save_image:
         for i in range(batch_size):
             image_index = i
             start = time.time()
@@ -92,7 +102,7 @@ while next_batch:
             # print("label:{}".format(data_label.shape))
             # print("data:{}".format(data.shape))
             _label = data_label[i].asnumpy().astype(np.uint8)
-            cv2.imwrite("./test_plus_batch/{}.png".format(image_index), _label)
+            # cv2.imwrite("/opt/densenet.mxnet/test_plus_batch/{}.png".format(image_index), _label)
             # label
             height = _label.shape[0]
             width = _label.shape[1]
@@ -102,12 +112,12 @@ while next_batch:
                 color = (color[2], color[1], color[0])
                 # color = color[::-1]
                 blank_image[np.where((_label == label.id))] = color
-            cv2.imwrite("./test_plus_batch/{}-label.png".format(image_index), blank_image)
+            cv2.imwrite("/opt/densenet.mxnet/test_plus_batch/{}-label.png".format(image_index), blank_image)
 
             image_label = data[i].asnumpy().astype(np.uint8).transpose(1, 2, 0)
             # image = image_label[:, :, 0:3]
             image = image_label[:, :, ::-1]
-            cv2.imwrite("./test_plus_batch/{}.jpg".format(image_index), image)
+            cv2.imwrite("/opt/densenet.mxnet/test_plus_batch/{}.jpg".format(image_index), image)
 
             end = time.time()
             print("batch-{} in {}s".format(image_index, (end - start)))
@@ -117,7 +127,7 @@ while next_batch:
     print("batch-{} time:{} s".format(batch_index, batch_end-batch_start))
 
     batch_index += 1
-    if batch_index == 1:
+    if batch_index == 10:
         break
 exit(0)
 

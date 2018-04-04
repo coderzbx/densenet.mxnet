@@ -60,7 +60,7 @@ data_iter = ImageSegRecordIter(
     random_l=0,  # 0.4*127
     max_rotate_angle=0,
     max_shear_ratio=0,
-    rand_mirror=False,
+    rand_mirror=True,
     shuffle=False,
 )
 
