@@ -79,12 +79,14 @@ def main():
             units = [6, 12, 48, 32]
         elif args.depth == 161:
             units = [6, 12, 36, 24]
+        elif args.depth == 80:
+            units = [4, 8, 16, 12]
         else:
             raise ValueError("no experiments done on detph {}, you can do it youself".format(args.depth))
         symbol = DenseNet(units=units, num_stage=4, growth_rate=48 if args.depth == 161 else args.growth_rate, num_class=args.num_classes,
                             data_type="kd", reduction=args.reduction, drop_out=args.drop_out, bottle_neck=True,
                             bn_mom=args.bn_mom, workspace=args.workspace)
-        # mx.viz.plot_network(symbol).view()
+        mx.viz.plot_network(symbol).view()
 	
     else:
         raise ValueError("do not support {} yet".format(args.data_type))

@@ -11,7 +11,7 @@ import mxnet as mx
 
 import numpy as np
 
-from icnet_model_v2 import ICNet_BN, ICNet
+from icnet_model_v2 import ICNet_BN
 
 IMG_MEAN = np.array((103.939, 116.779, 123.68), dtype=np.float32)
 
@@ -97,7 +97,7 @@ def load(saver, sess, ckpt_path):
 
 def main():
     """Create the model and start the training."""
-    data = mx.sym.Variable(name='data', shape=(1, 3, 1025, 2049))
+    data = mx.sym.Variable(name='data', shape=(1, 3, 1024, 2048))
 
     net = ICNet_BN({'data': data}, is_training=True, num_classes=13,
                    filter_scale=1)
@@ -105,7 +105,24 @@ def main():
     sub4_out = net.layers['sub4_out']
     sub24_out = net.layers['sub24_out']
     sub124_out = net.layers['conv6_interp']
-    print(sub124_out.list_arguments())
+    all_inputs = sub124_out.list_arguments()
+
+    layer_names = []
+    for i in all_inputs:
+        name_parts = str(i).split("_")
+        if len(name_parts) > 1:
+            name_parts = name_parts[:-1]
+        # if str(i).endswith("weight") or str(i).endswith("bias") or str(i).endswith("gamma") or str(i).endswith("beta"):
+        #     continue
+        layer_name_ = "_".join(name_parts)
+        if layer_name_ not in layer_names:
+            layer_names.append(layer_name_)
+
+    for layer_name_ in layer_names:
+        print("Layer:{}".format(layer_name_))
+        layer_ = net.layers[layer_name_]
+        arg_shape, output_shape, aux_shape = layer_.infer_shape()
+        print("Shape{}".format(output_shape))
 
     result_sym = net.get_output()
     mx.viz.plot_network(symbol=sub124_out).view()

@@ -147,8 +147,8 @@ class Network(object):
 
     @layer
     def zero_padding(self, input, paddings, name):
-        pad_mat = np.array([[0,0], [paddings, paddings], [paddings, paddings], [0, 0]])
-        return mx.sym.pad(data=input, pad_width=pad_mat, name=name)
+        # pad_mat = np.array([[0,0], [paddings, paddings], [paddings, paddings], [0, 0]])
+        return mx.sym.pad(data=input, mode="constant", constant_value=0, pad_width=(0,0,0,0,paddings,paddings,0,0), name=name)
 
     @layer
     def convolution(self, data, name, filters, kernel=3, stride=1, dilate=1, pad=-1,
