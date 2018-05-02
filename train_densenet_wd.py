@@ -70,7 +70,7 @@ def main():
                             data_type="msface", reduction=args.reduction, drop_out=args.drop_out, bottle_neck=True,
                             bn_mom=args.bn_mom, workspace=args.workspace)
     elif args.data_type == "kd":
-        args.num_classes = 15
+        #args.num_classes = 15
         if args.depth   == 121:
             units = [6, 12, 24, 16]
         elif args.depth == 169:
@@ -86,7 +86,7 @@ def main():
         symbol = DenseNet(units=units, num_stage=4, growth_rate=48 if args.depth == 161 else args.growth_rate, num_class=args.num_classes,
                             data_type="kd", reduction=args.reduction, drop_out=args.drop_out, bottle_neck=True,
                             bn_mom=args.bn_mom, workspace=args.workspace)
-        mx.viz.plot_network(symbol).view()
+        # mx.viz.plot_network(symbol).view()
 	
     else:
         raise ValueError("do not support {} yet".format(args.data_type))

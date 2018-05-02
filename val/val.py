@@ -14,8 +14,7 @@ from collections import namedtuple
 import shutil
 
 from util import load_weights
-from preprocess.class_map import arrow_labels_v1
-from preprocess.class_map import arrow_labels_v2
+from sign_labels import sign_total_labels
 
 # define a simple data batch
 Batch = namedtuple('Batch', ['data'])

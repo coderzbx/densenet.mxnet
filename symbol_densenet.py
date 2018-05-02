@@ -141,6 +141,7 @@ def DenseNet(units, num_stage, growth_rate, num_class, data_type, reduction=0.5,
     init_channels = 2 * growth_rate
     n_channels = init_channels
     data = mx.sym.Variable(name='data')
+    # data = mx.sym.Variable(name='data', shape=(1, 3, 1024, 2048))
     data = mx.sym.BatchNorm(data=data, fix_gamma=True, eps=2e-5, momentum=bn_mom, name='bn_data')
     if data_type == 'imagenet':
         body = mx.sym.Convolution(data=data, num_filter=growth_rate*2, kernel=(7, 7), stride=(2, 2), pad=(3, 3),
