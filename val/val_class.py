@@ -15,8 +15,7 @@ from collections import namedtuple
 import shutil
 
 from util import load_weights
-from preprocess.class_map import arrow_labels_v1
-from preprocess.class_map import arrow_labels_v2
+from sign_labels import sign_total_labels
 
 # define a simple data batch
 Batch = namedtuple('Batch', ['data'])
@@ -36,8 +35,8 @@ class ModelClassArrow:
         context = [mx.gpu(gpu_id)]
         self.mod = mx.mod.Module(network, context=context)
 
-        self.input_shape = [224, 224]
-        self.mod.bind(for_training=False, data_shapes=[('data', (1, 3, 224, 224))],
+        self.input_shape = [112, 112]
+        self.mod.bind(for_training=False, data_shapes=[('data', (1, 3, 112, 112))],
                  label_shapes=[('softmax_label', (1,))])
         self.mod.init_params(arg_params=net_args,
                         aux_params=net_auxs)
@@ -84,8 +83,10 @@ class ModelClassArrow:
 if __name__ == "__main__":
     time_start = time.time()
 
-    class_id_map = {label.id: label.categoryId for label in arrow_labels_v1}
-    name_dict = {label.id: label.name for label in arrow_labels_v2}
+    name_dict = {}
+    for label in sign_total_labels:
+        if label.categoryId not in name_dict:
+            name_dict[label.categoryId] = label.name
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--dir', type=str, required=True)

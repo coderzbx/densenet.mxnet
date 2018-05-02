@@ -15,8 +15,7 @@ from collections import namedtuple
 import shutil
 
 from util import load_weights
-from preprocess.class_map import arrow_labels_v1
-from preprocess.class_map import arrow_labels_v2
+from sign_labels import sign_total_labels
 
 # define a simple data batch
 Batch = namedtuple('Batch', ['data'])
@@ -36,7 +35,7 @@ class ModelClassArrow:
         context = [mx.gpu(gpu_id)]
         self.mod = mx.mod.Module(network, context=context)
 
-        self.input_shape = [256, 256] # (W, H)
+        self.input_shape = [112, 112] # (W, H)
         # self.mod.bind(for_training=False, data_shapes=[('data', (1, 3, self.input_shape[1], self.input_shape[0]))],
         #               label_shapes=[('softmax_label', (1,))])
         self.mod.bind(for_training=False, data_shapes=[('data', (1, 3, self.input_shape[1], self.input_shape[0]))],
@@ -90,8 +89,14 @@ class ModelClassArrow:
 if __name__ == "__main__":
     time_start = time.time()
 
-    class_id_map = {label.id: label.categoryId for label in arrow_labels_v1}
-    name_dict = {label.id: label.name for label in arrow_labels_v2}
+    name_dict = {}
+    label_dict = {}
+    for label in sign_total_labels:
+        if label.categoryId not in name_dict:
+            name_dict[label.categoryId] = label.name
+            name_dict[label.label] = label.name
+        if label.categoryId not in label_dict:
+            label_dict[label.categoryId] = label.label
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--dir', type=str, required=True)
@@ -104,7 +109,7 @@ if __name__ == "__main__":
         exit(0)
 
     image_dir = args.dir
-    dest_dir = os.path.join(args.dir, "arrow_predict")
+    dest_dir = os.path.join(args.dir, "sign_predict")
 
     model_net = ModelClassArrow(gpu_id=0)
     proc_list = []
@@ -127,10 +132,10 @@ if __name__ == "__main__":
             label_map[file_id] = class_id
             total_val += 1
 
-            if int(class_id) not in recall_map:
-                recall_map[int(class_id)] = {"total": 1}
+            if class_id not in recall_map:
+                recall_map[class_id] = {"total": 1}
             else:
-                recall_map[int(class_id)]["total"] += 1
+                recall_map[class_id]["total"] += 1
 
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
@@ -147,11 +152,8 @@ if __name__ == "__main__":
                 pred_label, accuracy = model_net.do(image_data=img)
             end = time.time()
 
-            if accuracy[0] < 0.95:
-                class_id = 0
-            else:
-                class_id = pred_label[0]
             class_id = pred_label[0]
+            class_id = label_dict[int(class_id)]
             class_acc = accuracy[0]
             class_dir = os.path.join(dest_dir, str(class_id))
             if not os.path.exists(class_dir):
@@ -161,7 +163,7 @@ if __name__ == "__main__":
             shutil.copy(file_path, dest_path)
             print("Processed {} in {} ms,acc:{}, labels:{} vs. {}".format(
                 os.path.basename(dest_path), str((end - start) * 1000),
-                class_acc, str(pred_label[0]), label_map[os.path.basename(file_path)])
+                class_acc, str(class_id), label_map[os.path.basename(file_path)])
             )
         except Exception as e:
             print (repr(e))
@@ -176,9 +178,6 @@ if __name__ == "__main__":
     pred_map = {}
     class_dir_list = os.listdir(dest_dir)
     for class_dir in class_dir_list:
-        if not str(class_dir).isdigit():
-            continue
-
         pred_dir = os.path.join(dest_dir, class_dir)
         pred_list = os.listdir(pred_dir)
 
@@ -187,21 +186,21 @@ if __name__ == "__main__":
                 continue
             pred_map[pred_file] = class_dir
 
-            if int(class_dir) not in accuracy_map:
-                accuracy_map[int(class_dir)] = {"total": 1}
+            if class_dir not in accuracy_map:
+                accuracy_map[class_dir] = {"total": 1}
             else:
-                accuracy_map[int(class_dir)]["total"] += 1
+                accuracy_map[class_dir]["total"] += 1
 
     correct_map = {}
 
     for image_name, class_id in label_map.items():
         pred_class = pred_map[image_name]
 
-        if int(class_id) == int(pred_class):
-            if int(class_id) not in correct_map:
-                correct_map[int(class_id)] = 1
+        if class_id == pred_class:
+            if class_id not in correct_map:
+                correct_map[class_id] = 1
             else:
-                correct_map[int(class_id)] += 1
+                correct_map[class_id] += 1
 
     print("start to calculate recall and accuracy...")
 
@@ -236,8 +235,7 @@ if __name__ == "__main__":
             total = info['total']
 
         label_name = name_dict[class_id]
-        print(label_name.encode("UTF-8"))
-        print("{},{},{}/{}".format(class_id, rate, correct, total))
+        print("{},{},{},{}/{}".format(label_name.encode("UTF-8"), class_id, rate, correct, total))
 
     print("\naccuracy, id, rate, correct/total")
     for class_id, info in accuracy_map.items():
@@ -252,5 +250,4 @@ if __name__ == "__main__":
             total = info['total']
 
         label_name = name_dict[class_id]
-        print(label_name.encode("UTF-8"))
-        print("{},{},{}/{}".format(class_id, rate, correct, total))
+        print("{},{},{},{}/{}".format(label_name.encode("UTF-8"), class_id, rate, correct, total))

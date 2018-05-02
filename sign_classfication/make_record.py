@@ -74,7 +74,7 @@ def write_list(path_out, image_list):
 
 
 def make_list_dir(args):
-    class_id_map = {label.categoryId: label.categoryId for label in sign_total_labels}
+    class_id_map = {label.label: label.categoryId for label in sign_total_labels}
 
     image_list = []
     image_index = 0
@@ -82,17 +82,21 @@ def make_list_dir(args):
     dir_path = args.root
 
     class_dir_list = os.listdir(dir_path)
-    for class_id in class_dir_list:
-        if not os.path.isdir(os.path.join(dir_path, class_id)):
+    for class_label in class_dir_list:
+        if class_label.startswith("."):
             continue
-        file_list = os.listdir(os.path.join(dir_path, class_id))
+        if not os.path.isdir(os.path.join(dir_path, class_label)):
+            continue
+        class_id = class_id_map[class_label]
+        if not os.path.isdir(os.path.join(dir_path, class_label)):
+            continue
+        file_list = os.listdir(os.path.join(dir_path, class_label))
         for file_id in file_list:
             if len(file_id) < 4 or file_id[-3:] not in ['jpg', 'png']:
                 continue
 
-            real_path = os.path.join(dir_path, class_id, file_id)
-            class_num = int(class_id)
-            map_id = class_id_map[class_num]
+            real_path = os.path.join(dir_path, class_label, file_id)
+            map_id = class_id_map[class_label]
 
             image_list.append((image_index, real_path, str(map_id)))
             image_index += 1

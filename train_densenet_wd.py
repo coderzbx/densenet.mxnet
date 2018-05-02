@@ -70,7 +70,7 @@ def main():
                             data_type="msface", reduction=args.reduction, drop_out=args.drop_out, bottle_neck=True,
                             bn_mom=args.bn_mom, workspace=args.workspace)
     elif args.data_type == "kd":
-        args.num_classes = 15
+        #args.num_classes = 15
         if args.depth   == 121:
             units = [6, 12, 24, 16]
         elif args.depth == 169:

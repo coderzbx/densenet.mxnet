@@ -49,7 +49,7 @@ if __name__ == "__main__":
     image_list = list(image_list)
     count = len(image_list)
 
-    check_dir = "/data/deeplearning/dataset/sign/train_20180428"
+    check_dir = "/data/deeplearning/dataset/sign/sign.test"
     if not os.path.exists(check_dir):
         os.makedirs(check_dir)
 
