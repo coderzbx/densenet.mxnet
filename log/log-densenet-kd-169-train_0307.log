@@ -1,0 +1,366 @@
+2018-03-07 10:29:27,419 - Namespace(aug_level=3, batch_size=512, bn_mom=0.9, data_dir='/data/deeplearning/dataset/arrow', data_type='kd', depth=169, drop_out=0.0, frequent=50, gpus='0,1,2,3', growth_rate=32, kv_store='device', list_dir='/data/deeplearning/dataset/label_arrow/training/', lr=0.1, model_load_epoch=0, model_prefix='/data/deeplearning/dataset/arrow/model_0307/densenet', mom=0.9, num_classes=15, num_examples=40835, reduction=0.5, retrain=False, train_prefix='train_0307', val_prefix='val_0301', wd=0.0001, workspace=512)
+2018-03-07 10:29:36,510 - Start training with [gpu(0), gpu(1), gpu(2), gpu(3)]
+2018-03-07 10:30:38,595 - Namespace(aug_level=3, batch_size=256, bn_mom=0.9, data_dir='/data/deeplearning/dataset/arrow', data_type='kd', depth=169, drop_out=0.0, frequent=50, gpus='0,1,2,3', growth_rate=32, kv_store='device', list_dir='/data/deeplearning/dataset/label_arrow/training/', lr=0.1, model_load_epoch=0, model_prefix='/data/deeplearning/dataset/arrow/model_0307/densenet', mom=0.9, num_classes=15, num_examples=40835, reduction=0.5, retrain=False, train_prefix='train_0307', val_prefix='val_0301', wd=0.0001, workspace=512)
+2018-03-07 10:30:46,832 - Start training with [gpu(0), gpu(1), gpu(2), gpu(3)]
+2018-03-07 10:31:55,667 - Namespace(aug_level=3, batch_size=128, bn_mom=0.9, data_dir='/data/deeplearning/dataset/arrow', data_type='kd', depth=169, drop_out=0.0, frequent=50, gpus='0,1,2,3', growth_rate=32, kv_store='device', list_dir='/data/deeplearning/dataset/label_arrow/training/', lr=0.1, model_load_epoch=0, model_prefix='/data/deeplearning/dataset/arrow/model_0307/densenet', mom=0.9, num_classes=15, num_examples=40835, reduction=0.5, retrain=False, train_prefix='train_0307', val_prefix='val_0301', wd=0.0001, workspace=512)
+2018-03-07 10:32:02,026 - Start training with [gpu(0), gpu(1), gpu(2), gpu(3)]
+2018-03-07 10:32:37,184 - Epoch[0] Batch [50]	Speed: 481.86 samples/sec	accuracy=0.222031
+2018-03-07 10:32:50,488 - Epoch[0] Batch [100]	Speed: 481.15 samples/sec	accuracy=0.290781
+2018-03-07 10:33:03,865 - Epoch[0] Batch [150]	Speed: 478.58 samples/sec	accuracy=0.377188
+2018-03-07 10:33:17,097 - Epoch[0] Batch [200]	Speed: 483.70 samples/sec	accuracy=0.446406
+2018-03-07 10:33:26,319 - Epoch[0] Resetting Data Iterator
+2018-03-07 10:33:26,323 - Epoch[0] Time cost=69.292
+2018-03-07 10:33:30,037 - Epoch[0] Validation-accuracy=0.197351
+2018-03-07 10:33:43,299 - Epoch[1] Batch [50]	Speed: 486.72 samples/sec	accuracy=0.524062
+2018-03-07 10:33:56,587 - Epoch[1] Batch [100]	Speed: 481.66 samples/sec	accuracy=0.585313
+2018-03-07 10:34:09,908 - Epoch[1] Batch [150]	Speed: 480.48 samples/sec	accuracy=0.627031
+2018-03-07 10:34:23,236 - Epoch[1] Batch [200]	Speed: 480.22 samples/sec	accuracy=0.671406
+2018-03-07 10:34:32,233 - Epoch[1] Resetting Data Iterator
+2018-03-07 10:34:32,234 - Epoch[1] Time cost=62.196
+2018-03-07 10:34:36,030 - Epoch[1] Validation-accuracy=0.350204
+2018-03-07 10:34:49,236 - Epoch[2] Batch [50]	Speed: 488.74 samples/sec	accuracy=0.714844
+2018-03-07 10:35:02,757 - Epoch[2] Batch [100]	Speed: 473.36 samples/sec	accuracy=0.747188
+2018-03-07 10:35:16,007 - Epoch[2] Batch [150]	Speed: 483.06 samples/sec	accuracy=0.759219
+2018-03-07 10:35:29,275 - Epoch[2] Batch [200]	Speed: 482.37 samples/sec	accuracy=0.787656
+2018-03-07 10:35:38,558 - Epoch[2] Resetting Data Iterator
+2018-03-07 10:35:38,558 - Epoch[2] Time cost=62.528
+2018-03-07 10:35:42,179 - Epoch[2] Validation-accuracy=0.332541
+2018-03-07 10:35:55,357 - Epoch[3] Batch [50]	Speed: 489.95 samples/sec	accuracy=0.802656
+2018-03-07 10:36:08,706 - Epoch[3] Batch [100]	Speed: 479.43 samples/sec	accuracy=0.816406
+2018-03-07 10:36:22,036 - Epoch[3] Batch [150]	Speed: 480.15 samples/sec	accuracy=0.822344
+2018-03-07 10:36:35,386 - Epoch[3] Batch [200]	Speed: 479.41 samples/sec	accuracy=0.820937
+2018-03-07 10:36:44,533 - Epoch[3] Resetting Data Iterator
+2018-03-07 10:36:44,533 - Epoch[3] Time cost=62.354
+2018-03-07 10:36:48,310 - Epoch[3] Validation-accuracy=0.433764
+2018-03-07 10:37:01,534 - Epoch[4] Batch [50]	Speed: 488.20 samples/sec	accuracy=0.839063
+2018-03-07 10:37:14,859 - Epoch[4] Batch [100]	Speed: 480.30 samples/sec	accuracy=0.852187
+2018-03-07 10:37:28,222 - Epoch[4] Batch [150]	Speed: 478.96 samples/sec	accuracy=0.850781
+2018-03-07 10:37:41,554 - Epoch[4] Batch [200]	Speed: 480.07 samples/sec	accuracy=0.859219
+2018-03-07 10:37:50,599 - Epoch[4] Resetting Data Iterator
+2018-03-07 10:37:50,600 - Epoch[4] Time cost=62.289
+2018-03-07 10:37:51,134 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0005.params"
+2018-03-07 10:37:54,451 - Epoch[4] Validation-accuracy=0.395041
+2018-03-07 10:38:07,670 - Epoch[5] Batch [50]	Speed: 488.50 samples/sec	accuracy=0.864688
+2018-03-07 10:38:20,973 - Epoch[5] Batch [100]	Speed: 481.11 samples/sec	accuracy=0.877031
+2018-03-07 10:38:34,289 - Epoch[5] Batch [150]	Speed: 480.68 samples/sec	accuracy=0.879531
+2018-03-07 10:38:47,617 - Epoch[5] Batch [200]	Speed: 480.22 samples/sec	accuracy=0.881406
+2018-03-07 10:38:56,867 - Epoch[5] Resetting Data Iterator
+2018-03-07 10:38:56,867 - Epoch[5] Time cost=62.416
+2018-03-07 10:39:00,528 - Epoch[5] Validation-accuracy=0.393003
+2018-03-07 10:39:13,779 - Epoch[6] Batch [50]	Speed: 486.98 samples/sec	accuracy=0.877500
+2018-03-07 10:39:27,106 - Epoch[6] Batch [100]	Speed: 480.23 samples/sec	accuracy=0.892188
+2018-03-07 10:39:40,554 - Epoch[6] Batch [150]	Speed: 475.94 samples/sec	accuracy=0.890625
+2018-03-07 10:39:53,998 - Epoch[6] Batch [200]	Speed: 476.06 samples/sec	accuracy=0.892656
+2018-03-07 10:40:03,024 - Epoch[6] Resetting Data Iterator
+2018-03-07 10:40:03,025 - Epoch[6] Time cost=62.496
+2018-03-07 10:40:06,657 - Epoch[6] Validation-accuracy=0.415421
+2018-03-07 10:40:19,861 - Epoch[7] Batch [50]	Speed: 488.64 samples/sec	accuracy=0.889062
+2018-03-07 10:40:33,187 - Epoch[7] Batch [100]	Speed: 480.30 samples/sec	accuracy=0.899844
+2018-03-07 10:40:46,504 - Epoch[7] Batch [150]	Speed: 480.63 samples/sec	accuracy=0.898906
+2018-03-07 10:40:59,894 - Epoch[7] Batch [200]	Speed: 477.96 samples/sec	accuracy=0.901250
+2018-03-07 10:41:09,242 - Epoch[7] Resetting Data Iterator
+2018-03-07 10:41:09,243 - Epoch[7] Time cost=62.586
+2018-03-07 10:41:12,960 - Epoch[7] Validation-accuracy=0.424253
+2018-03-07 10:41:26,253 - Epoch[8] Batch [50]	Speed: 486.09 samples/sec	accuracy=0.885938
+2018-03-07 10:41:39,635 - Epoch[8] Batch [100]	Speed: 478.25 samples/sec	accuracy=0.906719
+2018-03-07 10:41:52,931 - Epoch[8] Batch [150]	Speed: 481.40 samples/sec	accuracy=0.904687
+2018-03-07 10:42:06,199 - Epoch[8] Batch [200]	Speed: 482.39 samples/sec	accuracy=0.904844
+2018-03-07 10:42:15,234 - Epoch[8] Resetting Data Iterator
+2018-03-07 10:42:15,234 - Epoch[8] Time cost=62.273
+2018-03-07 10:42:19,059 - Epoch[8] Validation-accuracy=0.405231
+2018-03-07 10:42:32,243 - Epoch[9] Batch [50]	Speed: 489.69 samples/sec	accuracy=0.906406
+2018-03-07 10:42:45,554 - Epoch[9] Batch [100]	Speed: 480.83 samples/sec	accuracy=0.917813
+2018-03-07 10:42:58,869 - Epoch[9] Batch [150]	Speed: 480.69 samples/sec	accuracy=0.916094
+2018-03-07 10:43:12,178 - Epoch[9] Batch [200]	Speed: 480.91 samples/sec	accuracy=0.914375
+2018-03-07 10:43:21,206 - Epoch[9] Resetting Data Iterator
+2018-03-07 10:43:21,207 - Epoch[9] Time cost=62.147
+2018-03-07 10:43:21,817 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0010.params"
+2018-03-07 10:43:25,058 - Epoch[9] Validation-accuracy=0.467731
+2018-03-07 10:43:38,302 - Epoch[10] Batch [50]	Speed: 487.06 samples/sec	accuracy=0.913750
+2018-03-07 10:43:51,619 - Epoch[10] Batch [100]	Speed: 480.61 samples/sec	accuracy=0.920937
+2018-03-07 10:44:04,978 - Epoch[10] Batch [150]	Speed: 479.12 samples/sec	accuracy=0.914375
+2018-03-07 10:44:18,391 - Epoch[10] Batch [200]	Speed: 477.14 samples/sec	accuracy=0.910156
+2018-03-07 10:44:27,688 - Epoch[10] Resetting Data Iterator
+2018-03-07 10:44:27,689 - Epoch[10] Time cost=62.630
+2018-03-07 10:44:31,563 - Epoch[10] Validation-accuracy=0.480639
+2018-03-07 10:44:44,758 - Epoch[11] Batch [50]	Speed: 488.90 samples/sec	accuracy=0.912344
+2018-03-07 10:44:58,119 - Epoch[11] Batch [100]	Speed: 479.03 samples/sec	accuracy=0.917344
+2018-03-07 10:45:11,429 - Epoch[11] Batch [150]	Speed: 480.87 samples/sec	accuracy=0.925781
+2018-03-07 10:45:24,813 - Epoch[11] Batch [200]	Speed: 478.19 samples/sec	accuracy=0.923281
+2018-03-07 10:45:33,907 - Epoch[11] Resetting Data Iterator
+2018-03-07 10:45:33,907 - Epoch[11] Time cost=62.343
+2018-03-07 10:45:37,691 - Epoch[11] Validation-accuracy=0.476562
+2018-03-07 10:45:50,924 - Epoch[12] Batch [50]	Speed: 487.76 samples/sec	accuracy=0.927031
+2018-03-07 10:46:04,255 - Epoch[12] Batch [100]	Speed: 480.12 samples/sec	accuracy=0.922813
+2018-03-07 10:46:17,585 - Epoch[12] Batch [150]	Speed: 480.17 samples/sec	accuracy=0.925469
+2018-03-07 10:46:30,880 - Epoch[12] Batch [200]	Speed: 481.38 samples/sec	accuracy=0.921562
+2018-03-07 10:46:39,893 - Epoch[12] Resetting Data Iterator
+2018-03-07 10:46:39,894 - Epoch[12] Time cost=62.203
+2018-03-07 10:46:43,702 - Epoch[12] Validation-accuracy=0.483016
+2018-03-07 10:46:56,846 - Epoch[13] Batch [50]	Speed: 490.99 samples/sec	accuracy=0.929531
+2018-03-07 10:47:10,247 - Epoch[13] Batch [100]	Speed: 477.59 samples/sec	accuracy=0.931875
+2018-03-07 10:47:23,607 - Epoch[13] Batch [150]	Speed: 479.06 samples/sec	accuracy=0.927969
+2018-03-07 10:47:36,917 - Epoch[13] Batch [200]	Speed: 480.87 samples/sec	accuracy=0.928750
+2018-03-07 10:47:46,231 - Epoch[13] Resetting Data Iterator
+2018-03-07 10:47:46,232 - Epoch[13] Time cost=62.529
+2018-03-07 10:47:50,057 - Epoch[13] Validation-accuracy=0.480978
+2018-03-07 10:48:03,272 - Epoch[14] Batch [50]	Speed: 489.22 samples/sec	accuracy=0.931094
+2018-03-07 10:48:16,580 - Epoch[14] Batch [100]	Speed: 480.97 samples/sec	accuracy=0.940469
+2018-03-07 10:48:29,909 - Epoch[14] Batch [150]	Speed: 480.15 samples/sec	accuracy=0.933750
+2018-03-07 10:48:43,239 - Epoch[14] Batch [200]	Speed: 480.17 samples/sec	accuracy=0.933281
+2018-03-07 10:48:52,264 - Epoch[14] Resetting Data Iterator
+2018-03-07 10:48:52,264 - Epoch[14] Time cost=62.207
+2018-03-07 10:48:52,944 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0015.params"
+2018-03-07 10:48:56,076 - Epoch[14] Validation-accuracy=0.458220
+2018-03-07 10:49:09,320 - Epoch[15] Batch [50]	Speed: 487.20 samples/sec	accuracy=0.927500
+2018-03-07 10:49:22,623 - Epoch[15] Batch [100]	Speed: 481.13 samples/sec	accuracy=0.935625
+2018-03-07 10:49:36,039 - Epoch[15] Batch [150]	Speed: 477.07 samples/sec	accuracy=0.932031
+2018-03-07 10:49:49,373 - Epoch[15] Batch [200]	Speed: 480.01 samples/sec	accuracy=0.934844
+2018-03-07 10:49:58,662 - Epoch[15] Resetting Data Iterator
+2018-03-07 10:49:58,662 - Epoch[15] Time cost=62.586
+2018-03-07 10:50:02,407 - Epoch[15] Validation-accuracy=0.486413
+2018-03-07 10:50:15,664 - Epoch[16] Batch [50]	Speed: 486.62 samples/sec	accuracy=0.940937
+2018-03-07 10:50:28,981 - Epoch[16] Batch [100]	Speed: 480.64 samples/sec	accuracy=0.938438
+2018-03-07 10:50:42,344 - Epoch[16] Batch [150]	Speed: 478.93 samples/sec	accuracy=0.938125
+2018-03-07 10:50:55,726 - Epoch[16] Batch [200]	Speed: 478.30 samples/sec	accuracy=0.939375
+2018-03-07 10:51:04,764 - Epoch[16] Resetting Data Iterator
+2018-03-07 10:51:04,764 - Epoch[16] Time cost=62.357
+2018-03-07 10:51:08,499 - Epoch[16] Validation-accuracy=0.490489
+2018-03-07 10:51:21,698 - Epoch[17] Batch [50]	Speed: 488.55 samples/sec	accuracy=0.935625
+2018-03-07 10:51:35,033 - Epoch[17] Batch [100]	Speed: 479.98 samples/sec	accuracy=0.944688
+2018-03-07 10:51:48,361 - Epoch[17] Batch [150]	Speed: 480.21 samples/sec	accuracy=0.940156
+2018-03-07 10:52:01,682 - Epoch[17] Batch [200]	Speed: 480.47 samples/sec	accuracy=0.935781
+2018-03-07 10:52:10,750 - Epoch[17] Resetting Data Iterator
+2018-03-07 10:52:10,751 - Epoch[17] Time cost=62.251
+2018-03-07 10:52:14,511 - Epoch[17] Validation-accuracy=0.513927
+2018-03-07 10:52:27,753 - Epoch[18] Batch [50]	Speed: 487.28 samples/sec	accuracy=0.943750
+2018-03-07 10:52:41,267 - Epoch[18] Batch [100]	Speed: 473.58 samples/sec	accuracy=0.941562
+2018-03-07 10:52:54,570 - Epoch[18] Batch [150]	Speed: 481.12 samples/sec	accuracy=0.943281
+2018-03-07 10:53:07,922 - Epoch[18] Batch [200]	Speed: 479.35 samples/sec	accuracy=0.940312
+2018-03-07 10:53:17,258 - Epoch[18] Resetting Data Iterator
+2018-03-07 10:53:17,258 - Epoch[18] Time cost=62.746
+2018-03-07 10:53:20,966 - Epoch[18] Validation-accuracy=0.475543
+2018-03-07 10:53:34,193 - Epoch[19] Batch [50]	Speed: 487.52 samples/sec	accuracy=0.940937
+2018-03-07 10:53:47,578 - Epoch[19] Batch [100]	Speed: 478.17 samples/sec	accuracy=0.946719
+2018-03-07 10:54:00,903 - Epoch[19] Batch [150]	Speed: 480.31 samples/sec	accuracy=0.942656
+2018-03-07 10:54:14,257 - Epoch[19] Batch [200]	Speed: 479.30 samples/sec	accuracy=0.937969
+2018-03-07 10:54:23,274 - Epoch[19] Resetting Data Iterator
+2018-03-07 10:54:23,274 - Epoch[19] Time cost=62.308
+2018-03-07 10:54:23,932 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0020.params"
+2018-03-07 10:54:27,198 - Epoch[19] Validation-accuracy=0.469090
+2018-03-07 10:54:40,375 - Epoch[20] Batch [50]	Speed: 489.71 samples/sec	accuracy=0.942344
+2018-03-07 10:54:53,722 - Epoch[20] Batch [100]	Speed: 479.56 samples/sec	accuracy=0.947344
+2018-03-07 10:55:07,035 - Epoch[20] Batch [150]	Speed: 480.76 samples/sec	accuracy=0.943906
+2018-03-07 10:55:20,495 - Epoch[20] Batch [200]	Speed: 475.49 samples/sec	accuracy=0.945000
+2018-03-07 10:55:29,796 - Epoch[20] Resetting Data Iterator
+2018-03-07 10:55:29,797 - Epoch[20] Time cost=62.598
+2018-03-07 10:55:33,577 - Epoch[20] Validation-accuracy=0.540421
+2018-03-07 10:55:46,788 - Epoch[21] Batch [50]	Speed: 488.35 samples/sec	accuracy=0.950625
+2018-03-07 10:56:00,185 - Epoch[21] Batch [100]	Speed: 477.76 samples/sec	accuracy=0.951406
+2018-03-07 10:56:13,668 - Epoch[21] Batch [150]	Speed: 474.69 samples/sec	accuracy=0.943438
+2018-03-07 10:56:27,125 - Epoch[21] Batch [200]	Speed: 475.60 samples/sec	accuracy=0.948906
+2018-03-07 10:56:36,233 - Epoch[21] Resetting Data Iterator
+2018-03-07 10:56:36,233 - Epoch[21] Time cost=62.656
+2018-03-07 10:56:40,045 - Epoch[21] Validation-accuracy=0.505435
+2018-03-07 10:56:53,264 - Epoch[22] Batch [50]	Speed: 488.17 samples/sec	accuracy=0.947031
+2018-03-07 10:57:06,687 - Epoch[22] Batch [100]	Speed: 476.80 samples/sec	accuracy=0.953125
+2018-03-07 10:57:20,041 - Epoch[22] Batch [150]	Speed: 479.29 samples/sec	accuracy=0.949688
+2018-03-07 10:57:33,384 - Epoch[22] Batch [200]	Speed: 479.66 samples/sec	accuracy=0.947812
+2018-03-07 10:57:42,477 - Epoch[22] Resetting Data Iterator
+2018-03-07 10:57:42,478 - Epoch[22] Time cost=62.433
+2018-03-07 10:57:46,237 - Epoch[22] Validation-accuracy=0.494565
+2018-03-07 10:57:59,445 - Epoch[23] Batch [50]	Speed: 488.50 samples/sec	accuracy=0.954844
+2018-03-07 10:58:12,819 - Epoch[23] Batch [100]	Speed: 478.56 samples/sec	accuracy=0.950313
+2018-03-07 10:58:26,221 - Epoch[23] Batch [150]	Speed: 477.63 samples/sec	accuracy=0.948125
+2018-03-07 10:58:39,572 - Epoch[23] Batch [200]	Speed: 479.36 samples/sec	accuracy=0.945937
+2018-03-07 10:58:48,881 - Epoch[23] Resetting Data Iterator
+2018-03-07 10:58:48,881 - Epoch[23] Time cost=62.644
+2018-03-07 10:58:52,640 - Epoch[23] Validation-accuracy=0.490149
+2018-03-07 10:59:05,871 - Epoch[24] Batch [50]	Speed: 487.91 samples/sec	accuracy=0.952344
+2018-03-07 10:59:19,277 - Epoch[24] Batch [100]	Speed: 477.43 samples/sec	accuracy=0.950781
+2018-03-07 10:59:32,650 - Epoch[24] Batch [150]	Speed: 478.58 samples/sec	accuracy=0.953438
+2018-03-07 10:59:46,102 - Epoch[24] Batch [200]	Speed: 475.79 samples/sec	accuracy=0.949375
+2018-03-07 10:59:55,204 - Epoch[24] Resetting Data Iterator
+2018-03-07 10:59:55,205 - Epoch[24] Time cost=62.565
+2018-03-07 10:59:55,837 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0025.params"
+2018-03-07 10:59:59,086 - Epoch[24] Validation-accuracy=0.489810
+2018-03-07 11:00:12,338 - Epoch[25] Batch [50]	Speed: 486.71 samples/sec	accuracy=0.954219
+2018-03-07 11:00:25,687 - Epoch[25] Batch [100]	Speed: 479.44 samples/sec	accuracy=0.953594
+2018-03-07 11:00:38,983 - Epoch[25] Batch [150]	Speed: 481.36 samples/sec	accuracy=0.950000
+2018-03-07 11:00:52,285 - Epoch[25] Batch [200]	Speed: 481.17 samples/sec	accuracy=0.949063
+2018-03-07 11:01:01,262 - Epoch[25] Resetting Data Iterator
+2018-03-07 11:01:01,263 - Epoch[25] Time cost=62.177
+2018-03-07 11:01:05,087 - Epoch[25] Validation-accuracy=0.445652
+2018-03-07 11:01:18,303 - Epoch[26] Batch [50]	Speed: 488.25 samples/sec	accuracy=0.953438
+2018-03-07 11:01:31,614 - Epoch[26] Batch [100]	Speed: 480.83 samples/sec	accuracy=0.956719
+2018-03-07 11:01:44,955 - Epoch[26] Batch [150]	Speed: 479.75 samples/sec	accuracy=0.945937
+2018-03-07 11:01:58,304 - Epoch[26] Batch [200]	Speed: 479.47 samples/sec	accuracy=0.947812
+2018-03-07 11:02:07,624 - Epoch[26] Resetting Data Iterator
+2018-03-07 11:02:07,625 - Epoch[26] Time cost=62.538
+2018-03-07 11:02:11,629 - Epoch[26] Validation-accuracy=0.487772
+2018-03-07 11:02:24,879 - Epoch[27] Batch [50]	Speed: 486.90 samples/sec	accuracy=0.952187
+2018-03-07 11:02:38,393 - Epoch[27] Batch [100]	Speed: 473.60 samples/sec	accuracy=0.959688
+2018-03-07 11:02:51,872 - Epoch[27] Batch [150]	Speed: 474.82 samples/sec	accuracy=0.955625
+2018-03-07 11:03:05,296 - Epoch[27] Batch [200]	Speed: 476.77 samples/sec	accuracy=0.952500
+2018-03-07 11:03:14,372 - Epoch[27] Resetting Data Iterator
+2018-03-07 11:03:14,372 - Epoch[27] Time cost=62.742
+2018-03-07 11:03:18,203 - Epoch[27] Validation-accuracy=0.493546
+2018-03-07 11:03:31,394 - Epoch[28] Batch [50]	Speed: 489.28 samples/sec	accuracy=0.955313
+2018-03-07 11:03:44,776 - Epoch[28] Batch [100]	Speed: 478.29 samples/sec	accuracy=0.958125
+2018-03-07 11:03:58,223 - Epoch[28] Batch [150]	Speed: 475.98 samples/sec	accuracy=0.953125
+2018-03-07 11:04:11,731 - Epoch[28] Batch [200]	Speed: 473.82 samples/sec	accuracy=0.957656
+2018-03-07 11:04:20,994 - Epoch[28] Resetting Data Iterator
+2018-03-07 11:04:20,995 - Epoch[28] Time cost=62.791
+2018-03-07 11:04:24,833 - Epoch[28] Validation-accuracy=0.446671
+2018-03-07 11:04:38,073 - Epoch[29] Batch [50]	Speed: 487.52 samples/sec	accuracy=0.958438
+2018-03-07 11:04:51,450 - Epoch[29] Batch [100]	Speed: 478.47 samples/sec	accuracy=0.962031
+2018-03-07 11:05:04,802 - Epoch[29] Batch [150]	Speed: 479.33 samples/sec	accuracy=0.950156
+2018-03-07 11:05:18,242 - Epoch[29] Batch [200]	Speed: 476.24 samples/sec	accuracy=0.957031
+2018-03-07 11:05:27,278 - Epoch[29] Resetting Data Iterator
+2018-03-07 11:05:27,278 - Epoch[29] Time cost=62.445
+2018-03-07 11:05:28,076 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0030.params"
+2018-03-07 11:05:31,288 - Epoch[29] Validation-accuracy=0.418818
+2018-03-07 11:05:44,490 - Epoch[30] Batch [50]	Speed: 488.94 samples/sec	accuracy=0.955937
+2018-03-07 11:05:57,882 - Epoch[30] Batch [100]	Speed: 477.93 samples/sec	accuracy=0.957344
+2018-03-07 11:06:11,258 - Epoch[30] Batch [150]	Speed: 478.47 samples/sec	accuracy=0.953750
+2018-03-07 11:06:24,656 - Epoch[30] Batch [200]	Speed: 477.73 samples/sec	accuracy=0.956094
+2018-03-07 11:06:33,718 - Epoch[30] Resetting Data Iterator
+2018-03-07 11:06:33,719 - Epoch[30] Time cost=62.430
+2018-03-07 11:06:37,471 - Epoch[30] Validation-accuracy=0.471467
+2018-03-07 11:06:50,722 - Epoch[31] Batch [50]	Speed: 486.74 samples/sec	accuracy=0.955781
+2018-03-07 11:07:04,032 - Epoch[31] Batch [100]	Speed: 480.89 samples/sec	accuracy=0.964375
+2018-03-07 11:07:17,402 - Epoch[31] Batch [150]	Speed: 478.70 samples/sec	accuracy=0.959688
+2018-03-07 11:07:30,757 - Epoch[31] Batch [200]	Speed: 479.23 samples/sec	accuracy=0.958750
+2018-03-07 11:07:40,144 - Epoch[31] Resetting Data Iterator
+2018-03-07 11:07:40,145 - Epoch[31] Time cost=62.673
+2018-03-07 11:07:44,058 - Epoch[31] Validation-accuracy=0.481658
+2018-03-07 11:07:57,275 - Epoch[32] Batch [50]	Speed: 487.87 samples/sec	accuracy=0.961719
+2018-03-07 11:08:10,628 - Epoch[32] Batch [100]	Speed: 479.30 samples/sec	accuracy=0.963281
+2018-03-07 11:08:23,983 - Epoch[32] Batch [150]	Speed: 479.26 samples/sec	accuracy=0.954063
+2018-03-07 11:08:37,343 - Epoch[32] Batch [200]	Speed: 479.09 samples/sec	accuracy=0.961094
+2018-03-07 11:08:46,371 - Epoch[32] Resetting Data Iterator
+2018-03-07 11:08:46,372 - Epoch[32] Time cost=62.313
+2018-03-07 11:08:50,188 - Epoch[32] Validation-accuracy=0.458899
+2018-03-07 11:09:03,408 - Epoch[33] Batch [50]	Speed: 488.09 samples/sec	accuracy=0.965156
+2018-03-07 11:09:16,770 - Epoch[33] Batch [100]	Speed: 478.99 samples/sec	accuracy=0.963750
+2018-03-07 11:09:30,151 - Epoch[33] Batch [150]	Speed: 478.32 samples/sec	accuracy=0.959688
+2018-03-07 11:09:43,481 - Epoch[33] Batch [200]	Speed: 480.15 samples/sec	accuracy=0.958125
+2018-03-07 11:09:52,815 - Epoch[33] Resetting Data Iterator
+2018-03-07 11:09:52,816 - Epoch[33] Time cost=62.627
+2018-03-07 11:09:56,662 - Epoch[33] Validation-accuracy=0.451427
+2018-03-07 11:10:09,876 - Epoch[34] Batch [50]	Speed: 488.32 samples/sec	accuracy=0.961719
+2018-03-07 11:10:23,215 - Epoch[34] Batch [100]	Speed: 479.83 samples/sec	accuracy=0.959844
+2018-03-07 11:10:36,706 - Epoch[34] Batch [150]	Speed: 474.41 samples/sec	accuracy=0.960000
+2018-03-07 11:10:50,056 - Epoch[34] Batch [200]	Speed: 479.39 samples/sec	accuracy=0.962656
+2018-03-07 11:10:59,134 - Epoch[34] Resetting Data Iterator
+2018-03-07 11:10:59,135 - Epoch[34] Time cost=62.472
+2018-03-07 11:10:59,731 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0035.params"
+2018-03-07 11:11:02,984 - Epoch[34] Validation-accuracy=0.405571
+2018-03-07 11:11:16,158 - Epoch[35] Batch [50]	Speed: 489.60 samples/sec	accuracy=0.958906
+2018-03-07 11:11:29,534 - Epoch[35] Batch [100]	Speed: 478.52 samples/sec	accuracy=0.963125
+2018-03-07 11:11:42,917 - Epoch[35] Batch [150]	Speed: 478.23 samples/sec	accuracy=0.953438
+2018-03-07 11:11:56,336 - Epoch[35] Batch [200]	Speed: 476.96 samples/sec	accuracy=0.961875
+2018-03-07 11:12:05,378 - Epoch[35] Resetting Data Iterator
+2018-03-07 11:12:05,378 - Epoch[35] Time cost=62.393
+2018-03-07 11:12:09,146 - Epoch[35] Validation-accuracy=0.456182
+2018-03-07 11:12:22,408 - Epoch[36] Batch [50]	Speed: 486.75 samples/sec	accuracy=0.963125
+2018-03-07 11:12:35,816 - Epoch[36] Batch [100]	Speed: 477.36 samples/sec	accuracy=0.962031
+2018-03-07 11:12:49,148 - Epoch[36] Batch [150]	Speed: 480.05 samples/sec	accuracy=0.959063
+2018-03-07 11:13:02,460 - Epoch[36] Batch [200]	Speed: 480.80 samples/sec	accuracy=0.956719
+2018-03-07 11:13:11,757 - Epoch[36] Resetting Data Iterator
+2018-03-07 11:13:11,757 - Epoch[36] Time cost=62.610
+2018-03-07 11:13:15,488 - Epoch[36] Validation-accuracy=0.491168
+2018-03-07 11:13:28,747 - Epoch[37] Batch [50]	Speed: 486.59 samples/sec	accuracy=0.964375
+2018-03-07 11:13:42,083 - Epoch[37] Batch [100]	Speed: 479.94 samples/sec	accuracy=0.963281
+2018-03-07 11:13:55,453 - Epoch[37] Batch [150]	Speed: 478.68 samples/sec	accuracy=0.961562
+2018-03-07 11:14:08,870 - Epoch[37] Batch [200]	Speed: 477.03 samples/sec	accuracy=0.961094
+2018-03-07 11:14:17,900 - Epoch[37] Resetting Data Iterator
+2018-03-07 11:14:17,901 - Epoch[37] Time cost=62.412
+2018-03-07 11:14:21,740 - Epoch[37] Validation-accuracy=0.500000
+2018-03-07 11:14:35,010 - Epoch[38] Batch [50]	Speed: 486.28 samples/sec	accuracy=0.965000
+2018-03-07 11:14:48,354 - Epoch[38] Batch [100]	Speed: 479.64 samples/sec	accuracy=0.963125
+2018-03-07 11:15:01,721 - Epoch[38] Batch [150]	Speed: 478.80 samples/sec	accuracy=0.965000
+2018-03-07 11:15:15,107 - Epoch[38] Batch [200]	Speed: 478.15 samples/sec	accuracy=0.965938
+2018-03-07 11:15:24,183 - Epoch[38] Resetting Data Iterator
+2018-03-07 11:15:24,184 - Epoch[38] Time cost=62.444
+2018-03-07 11:15:27,971 - Epoch[38] Validation-accuracy=0.478940
+2018-03-07 11:15:41,150 - Epoch[39] Batch [50]	Speed: 489.17 samples/sec	accuracy=0.961719
+2018-03-07 11:15:54,470 - Epoch[39] Batch [100]	Speed: 480.52 samples/sec	accuracy=0.963594
+2018-03-07 11:16:07,808 - Epoch[39] Batch [150]	Speed: 479.85 samples/sec	accuracy=0.959531
+2018-03-07 11:16:21,154 - Epoch[39] Batch [200]	Speed: 479.56 samples/sec	accuracy=0.964531
+2018-03-07 11:16:30,459 - Epoch[39] Resetting Data Iterator
+2018-03-07 11:16:30,459 - Epoch[39] Time cost=62.488
+2018-03-07 11:16:31,113 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0040.params"
+2018-03-07 11:16:34,322 - Epoch[39] Validation-accuracy=0.526495
+2018-03-07 11:16:47,578 - Epoch[40] Batch [50]	Speed: 487.71 samples/sec	accuracy=0.964375
+2018-03-07 11:17:00,965 - Epoch[40] Batch [100]	Speed: 478.11 samples/sec	accuracy=0.964688
+2018-03-07 11:17:14,324 - Epoch[40] Batch [150]	Speed: 479.08 samples/sec	accuracy=0.959844
+2018-03-07 11:17:27,622 - Epoch[40] Batch [200]	Speed: 481.30 samples/sec	accuracy=0.963750
+2018-03-07 11:17:36,640 - Epoch[40] Resetting Data Iterator
+2018-03-07 11:17:36,641 - Epoch[40] Time cost=62.318
+2018-03-07 11:17:40,509 - Epoch[40] Validation-accuracy=0.484375
+2018-03-07 11:17:53,873 - Epoch[41] Batch [50]	Speed: 482.48 samples/sec	accuracy=0.966719
+2018-03-07 11:18:07,432 - Epoch[41] Batch [100]	Speed: 472.02 samples/sec	accuracy=0.968750
+2018-03-07 11:18:20,840 - Epoch[41] Batch [150]	Speed: 477.34 samples/sec	accuracy=0.965625
+2018-03-07 11:18:34,181 - Epoch[41] Batch [200]	Speed: 479.76 samples/sec	accuracy=0.965781
+2018-03-07 11:18:43,636 - Epoch[41] Resetting Data Iterator
+2018-03-07 11:18:43,637 - Epoch[41] Time cost=63.128
+2018-03-07 11:18:47,469 - Epoch[41] Validation-accuracy=0.518682
+2018-03-07 11:19:00,706 - Epoch[42] Batch [50]	Speed: 487.27 samples/sec	accuracy=0.967187
+2018-03-07 11:19:14,076 - Epoch[42] Batch [100]	Speed: 478.68 samples/sec	accuracy=0.964375
+2018-03-07 11:19:27,445 - Epoch[42] Batch [150]	Speed: 478.75 samples/sec	accuracy=0.966562
+2018-03-07 11:19:40,749 - Epoch[42] Batch [200]	Speed: 481.10 samples/sec	accuracy=0.967656
+2018-03-07 11:19:49,791 - Epoch[42] Resetting Data Iterator
+2018-03-07 11:19:49,791 - Epoch[42] Time cost=62.321
+2018-03-07 11:19:53,628 - Epoch[42] Validation-accuracy=0.439198
+2018-03-07 11:20:06,891 - Epoch[43] Batch [50]	Speed: 486.43 samples/sec	accuracy=0.962656
+2018-03-07 11:20:20,221 - Epoch[43] Batch [100]	Speed: 480.14 samples/sec	accuracy=0.969844
+2018-03-07 11:20:33,579 - Epoch[43] Batch [150]	Speed: 479.16 samples/sec	accuracy=0.964844
+2018-03-07 11:20:46,894 - Epoch[43] Batch [200]	Speed: 480.66 samples/sec	accuracy=0.966719
+2018-03-07 11:20:55,972 - Epoch[43] Resetting Data Iterator
+2018-03-07 11:20:55,972 - Epoch[43] Time cost=62.344
+2018-03-07 11:20:59,660 - Epoch[43] Validation-accuracy=0.479959
+2018-03-07 11:21:12,933 - Epoch[44] Batch [50]	Speed: 486.07 samples/sec	accuracy=0.966250
+2018-03-07 11:21:26,322 - Epoch[44] Batch [100]	Speed: 478.04 samples/sec	accuracy=0.971094
+2018-03-07 11:21:39,691 - Epoch[44] Batch [150]	Speed: 478.76 samples/sec	accuracy=0.967500
+2018-03-07 11:21:53,084 - Epoch[44] Batch [200]	Speed: 477.88 samples/sec	accuracy=0.963594
+2018-03-07 11:22:02,414 - Epoch[44] Resetting Data Iterator
+2018-03-07 11:22:02,415 - Epoch[44] Time cost=62.754
+2018-03-07 11:22:03,054 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0045.params"
+2018-03-07 11:22:06,265 - Epoch[44] Validation-accuracy=0.429688
+2018-03-07 11:22:19,468 - Epoch[45] Batch [50]	Speed: 488.41 samples/sec	accuracy=0.966406
+2018-03-07 11:22:32,809 - Epoch[45] Batch [100]	Speed: 479.75 samples/sec	accuracy=0.970938
+2018-03-07 11:22:46,072 - Epoch[45] Batch [150]	Speed: 482.56 samples/sec	accuracy=0.966250
+2018-03-07 11:22:59,375 - Epoch[45] Batch [200]	Speed: 481.12 samples/sec	accuracy=0.967969
+2018-03-07 11:23:08,427 - Epoch[45] Resetting Data Iterator
+2018-03-07 11:23:08,428 - Epoch[45] Time cost=62.162
+2018-03-07 11:23:12,110 - Epoch[45] Validation-accuracy=0.492188
+2018-03-07 11:23:25,294 - Epoch[46] Batch [50]	Speed: 489.12 samples/sec	accuracy=0.967187
+2018-03-07 11:23:38,620 - Epoch[46] Batch [100]	Speed: 480.30 samples/sec	accuracy=0.968594
+2018-03-07 11:23:51,965 - Epoch[46] Batch [150]	Speed: 479.59 samples/sec	accuracy=0.966406
+2018-03-07 11:24:05,283 - Epoch[46] Batch [200]	Speed: 480.57 samples/sec	accuracy=0.967500
+2018-03-07 11:24:14,302 - Epoch[46] Resetting Data Iterator
+2018-03-07 11:24:14,303 - Epoch[46] Time cost=62.193
+2018-03-07 11:24:18,041 - Epoch[46] Validation-accuracy=0.468071
+2018-03-07 11:24:31,261 - Epoch[47] Batch [50]	Speed: 487.89 samples/sec	accuracy=0.966719
+2018-03-07 11:24:44,666 - Epoch[47] Batch [100]	Speed: 477.45 samples/sec	accuracy=0.968750
+2018-03-07 11:24:58,039 - Epoch[47] Batch [150]	Speed: 478.59 samples/sec	accuracy=0.966406
+2018-03-07 11:25:11,364 - Epoch[47] Batch [200]	Speed: 480.34 samples/sec	accuracy=0.968437
+2018-03-07 11:25:20,692 - Epoch[47] Resetting Data Iterator
+2018-03-07 11:25:20,693 - Epoch[47] Time cost=62.651
+2018-03-07 11:25:24,541 - Epoch[47] Validation-accuracy=0.423234
+2018-03-07 11:25:37,751 - Epoch[48] Batch [50]	Speed: 488.17 samples/sec	accuracy=0.972187
+2018-03-07 11:25:51,107 - Epoch[48] Batch [100]	Speed: 479.22 samples/sec	accuracy=0.970938
+2018-03-07 11:26:04,516 - Epoch[48] Batch [150]	Speed: 477.32 samples/sec	accuracy=0.965313
+2018-03-07 11:26:17,848 - Epoch[48] Batch [200]	Speed: 480.06 samples/sec	accuracy=0.966406
+2018-03-07 11:26:26,929 - Epoch[48] Resetting Data Iterator
+2018-03-07 11:26:26,930 - Epoch[48] Time cost=62.388
+2018-03-07 11:26:30,827 - Epoch[48] Validation-accuracy=0.494905
+2018-03-07 11:26:44,046 - Epoch[49] Batch [50]	Speed: 487.87 samples/sec	accuracy=0.970469
+2018-03-07 11:26:57,509 - Epoch[49] Batch [100]	Speed: 475.37 samples/sec	accuracy=0.968906
+2018-03-07 11:27:10,849 - Epoch[49] Batch [150]	Speed: 479.82 samples/sec	accuracy=0.963906
+2018-03-07 11:27:24,205 - Epoch[49] Batch [200]	Speed: 479.19 samples/sec	accuracy=0.965469
+2018-03-07 11:27:33,529 - Epoch[49] Resetting Data Iterator
+2018-03-07 11:27:33,530 - Epoch[49] Time cost=62.703
+2018-03-07 11:27:34,236 - Saved checkpoint to "/data/deeplearning/dataset/arrow/model_0307/densenet-kd-169-0-0050.params"
+2018-03-07 11:27:37,449 - Epoch[49] Validation-accuracy=0.521399

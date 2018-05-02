@@ -1,0 +1,105 @@
+usage: train_densenet.py [-h] [--gpus GPUS] [--data-dir DATA_DIR]
+                         [--data-type DATA_TYPE] [--list-dir LIST_DIR]
+                         [--train_prefix TRAIN_PREFIX]
+                         [--model_prefix MODEL_PREFIX]
+                         [--val_prefix VAL_PREFIX] [--lr LR] [--mom MOM]
+                         [--bn-mom BN_MOM] [--wd WD] [--batch-size BATCH_SIZE]
+                         [--growth-rate GROWTH_RATE] [--drop-out DROP_OUT]
+                         [--reduction REDUCTION] [--workspace WORKSPACE]
+                         [--depth DEPTH] [--num-classes NUM_CLASSES]
+                         [--aug-level {1,2,3}] [--num-examples NUM_EXAMPLES]
+                         [--kv-store KV_STORE]
+                         [--model-load-epoch MODEL_LOAD_EPOCH]
+                         [--frequent FREQUENT] [--retrain]
+train_densenet.py: error: unrecognized arguments: 2
+2018-04-29 08:57:19,155 - Namespace(aug_level=3, batch_size=64, bn_mom=0.9, data_type='kd', depth=169, drop_out=0.3, frequent=50, gpus='5,6,7,8,9', growth_rate=32, kv_store='device', log='/data/deeplearning/dataset/arrow/log/train_20180321_new.log', lr=0.1, model_load_epoch=0, model_prefix='/data/deeplearning/dataset/arrow/models/model_0321_new/model', mom=0.9, num_classes=15, num_examples=11691, reduction=0.5, retrain=False, step='100,300,500', train_prefix='/data/deeplearning/dataset/arrow/record/data_0321_train', val_prefix='/data/deeplearning/dataset/arrow/record/data_0321_val', wd=0.0005, workspace=512)
+[08:57:19] src/io/iter_image_recordio_2.cc:170: ImageRecordIOParser2: /data/deeplearning/dataset/arrow/record/data_0321_train.rec, use 4 threads for decoding..
+[08:57:24] src/io/iter_image_recordio_2.cc:170: ImageRecordIOParser2: /data/deeplearning/dataset/arrow/record/data_0321_val.rec, use 4 threads for decoding..
+./train_densenet_wd.py:172: DeprecationWarning: [91mmxnet.model.FeedForward has been deprecated. Please use mxnet.mod.Module instead.[0m
+  lr_scheduler        = multi_factor_scheduler(begin_epoch, epoch_size, step=step, factor=0.1),
+/opt/seg-mxnet/python/mxnet/model.py:573: DeprecationWarning: [91mCalling initializer with init(str, NDArray) has been deprecated.please use init(mx.init.InitDesc(...), NDArray) instead.[0m
+  self.initializer(k, v)
+/opt/seg-mxnet/python/mxnet/model.py:579: DeprecationWarning: [91mCalling initializer with init(str, NDArray) has been deprecated.please use init(mx.init.InitDesc(...), NDArray) instead.[0m
+  self.initializer(k, v)
+2018-04-29 08:57:25,497 - Start training with [gpu(5), gpu(6), gpu(7), gpu(8), gpu(9)]
+[08:57:43] src/operator/nn/./cudnn/./cudnn_algoreg-inl.h:107: Running performance tests to find the best convolution algorithm, this can take a while... (setting env variable MXNET_CUDNN_AUTOTUNE_DEFAULT to 0 to disable)
+[08:57:57] src/operator/nn/./cudnn/./cudnn_algoreg-inl.h:107: Running performance tests to find the best convolution algorithm, this can take a while... (setting env variable MXNET_CUDNN_AUTOTUNE_DEFAULT to 0 to disable)
+[08:58:06] src/operator/nn/./cudnn/./cudnn_algoreg-inl.h:107: Running performance tests to find the best convolution algorithm, this can take a while... (setting env variable MXNET_CUDNN_AUTOTUNE_DEFAULT to 0 to disable)
+[08:58:06] src/operator/nn/./cudnn/./cudnn_algoreg-inl.h:107: Running performance tests to find the best convolution algorithm, this can take a while... (setting env variable MXNET_CUDNN_AUTOTUNE_DEFAULT to 0 to disable)
+[08:58:06] src/operator/nn/./cudnn/./cudnn_algoreg-inl.h:107: Running performance tests to find the best convolution algorithm, this can take a while... (setting env variable MXNET_CUDNN_AUTOTUNE_DEFAULT to 0 to disable)
+[08:58:15] src/operator/nn/./cudnn/./cudnn_algoreg-inl.h:107: Running performance tests to find the best convolution algorithm, this can take a while... (setting env variable MXNET_CUDNN_AUTOTUNE_DEFAULT to 0 to disable)
+2018-04-29 08:58:37,241 - Epoch[0] Batch [50]	Speed: 194.78 samples/sec	accuracy=0.146563
+2018-04-29 08:58:53,461 - Epoch[0] Batch [100]	Speed: 197.31 samples/sec	accuracy=0.187500
+2018-04-29 08:59:09,714 - Epoch[0] Batch [150]	Speed: 196.89 samples/sec	accuracy=0.233750
+2018-04-29 08:59:20,489 - Epoch[0] Resetting Data Iterator
+2018-04-29 08:59:20,490 - Epoch[0] Time cost=97.124
+2018-04-29 08:59:24,399 - Epoch[0] Validation-accuracy=0.276042
+2018-04-29 08:59:40,628 - Epoch[1] Batch [50]	Speed: 201.33 samples/sec	accuracy=0.339687
+2018-04-29 08:59:56,951 - Epoch[1] Batch [100]	Speed: 196.06 samples/sec	accuracy=0.383750
+2018-04-29 09:00:13,227 - Epoch[1] Batch [150]	Speed: 196.62 samples/sec	accuracy=0.427500
+2018-04-29 09:00:23,936 - Epoch[1] Resetting Data Iterator
+2018-04-29 09:00:23,937 - Epoch[1] Time cost=59.538
+2018-04-29 09:00:27,920 - Epoch[1] Validation-accuracy=0.387649
+2018-04-29 09:00:44,230 - Epoch[2] Batch [50]	Speed: 200.30 samples/sec	accuracy=0.507812
+2018-04-29 09:01:00,498 - Epoch[2] Batch [100]	Speed: 196.72 samples/sec	accuracy=0.525312
+2018-04-29 09:01:16,878 - Epoch[2] Batch [150]	Speed: 195.36 samples/sec	accuracy=0.551250
+2018-04-29 09:01:27,613 - Epoch[2] Resetting Data Iterator
+2018-04-29 09:01:27,613 - Epoch[2] Time cost=59.693
+2018-04-29 09:01:31,464 - Epoch[2] Validation-accuracy=0.502232
+2018-04-29 09:01:47,717 - Epoch[3] Batch [50]	Speed: 200.88 samples/sec	accuracy=0.598750
+2018-04-29 09:02:04,064 - Epoch[3] Batch [100]	Speed: 195.77 samples/sec	accuracy=0.611563
+2018-04-29 09:02:20,446 - Epoch[3] Batch [150]	Speed: 195.34 samples/sec	accuracy=0.620938
+2018-04-29 09:02:30,842 - Epoch[3] Resetting Data Iterator
+2018-04-29 09:02:30,842 - Epoch[3] Time cost=59.378
+2018-04-29 09:02:34,822 - Epoch[3] Validation-accuracy=0.559524
+2018-04-29 09:02:51,029 - Epoch[4] Batch [50]	Speed: 201.13 samples/sec	accuracy=0.675000
+2018-04-29 09:03:07,352 - Epoch[4] Batch [100]	Speed: 196.05 samples/sec	accuracy=0.668125
+2018-04-29 09:03:23,626 - Epoch[4] Batch [150]	Speed: 196.64 samples/sec	accuracy=0.686562
+2018-04-29 09:03:34,374 - Epoch[4] Resetting Data Iterator
+2018-04-29 09:03:34,374 - Epoch[4] Time cost=59.552
+2018-04-29 09:03:35,080 - Saved checkpoint to "/data/deeplearning/dataset/arrow/models/model_0321_new/densenet-kd-169-0-0005.params"
+2018-04-29 09:03:38,345 - Epoch[4] Validation-accuracy=0.624256
+2018-04-29 09:03:54,618 - Epoch[5] Batch [50]	Speed: 200.93 samples/sec	accuracy=0.733437
+2018-04-29 09:04:11,102 - Epoch[5] Batch [100]	Speed: 194.14 samples/sec	accuracy=0.733125
+2018-04-29 09:04:27,423 - Epoch[5] Batch [150]	Speed: 196.07 samples/sec	accuracy=0.763750
+2018-04-29 09:04:38,309 - Epoch[5] Resetting Data Iterator
+2018-04-29 09:04:38,309 - Epoch[5] Time cost=59.963
+2018-04-29 09:04:42,180 - Epoch[5] Validation-accuracy=0.747024
+2018-04-29 09:04:58,425 - Epoch[6] Batch [50]	Speed: 201.22 samples/sec	accuracy=0.795937
+2018-04-29 09:05:14,780 - Epoch[6] Batch [100]	Speed: 195.66 samples/sec	accuracy=0.787188
+2018-04-29 09:05:31,167 - Epoch[6] Batch [150]	Speed: 195.28 samples/sec	accuracy=0.802813
+2018-04-29 09:05:41,537 - Epoch[6] Resetting Data Iterator
+2018-04-29 09:05:41,537 - Epoch[6] Time cost=59.356
+2018-04-29 09:05:45,494 - Epoch[6] Validation-accuracy=0.826637
+2018-04-29 09:06:01,790 - Epoch[7] Batch [50]	Speed: 200.89 samples/sec	accuracy=0.822812
+2018-04-29 09:06:18,137 - Epoch[7] Batch [100]	Speed: 195.76 samples/sec	accuracy=0.822187
+2018-04-29 09:06:34,403 - Epoch[7] Batch [150]	Speed: 196.74 samples/sec	accuracy=0.831562
+2018-04-29 09:06:45,177 - Epoch[7] Resetting Data Iterator
+2018-04-29 09:06:45,178 - Epoch[7] Time cost=59.684
+2018-04-29 09:06:48,999 - Epoch[7] Validation-accuracy=0.604911
+2018-04-29 09:07:05,132 - Epoch[8] Batch [50]	Speed: 202.59 samples/sec	accuracy=0.842500
+2018-04-29 09:07:21,392 - Epoch[8] Batch [100]	Speed: 196.81 samples/sec	accuracy=0.835000
+2018-04-29 09:07:37,757 - Epoch[8] Batch [150]	Speed: 195.54 samples/sec	accuracy=0.841875
+2018-04-29 09:07:48,475 - Epoch[8] Resetting Data Iterator
+2018-04-29 09:07:48,475 - Epoch[8] Time cost=59.477
+2018-04-29 09:07:52,233 - Epoch[8] Validation-accuracy=0.724702
+2018-04-29 09:08:09,811 - Epoch[9] Batch [50]	Speed: 185.49 samples/sec	accuracy=0.861250
+2018-04-29 09:08:26,509 - Epoch[9] Batch [100]	Speed: 191.65 samples/sec	accuracy=0.857812
+2018-04-29 09:08:43,174 - Epoch[9] Batch [150]	Speed: 192.03 samples/sec	accuracy=0.872188
+2018-04-29 09:08:53,928 - Epoch[9] Resetting Data Iterator
+2018-04-29 09:08:53,929 - Epoch[9] Time cost=61.696
+2018-04-29 09:08:54,740 - Saved checkpoint to "/data/deeplearning/dataset/arrow/models/model_0321_new/densenet-kd-169-0-0010.params"
+2018-04-29 09:08:57,969 - Epoch[9] Validation-accuracy=0.760417
+2018-04-29 09:09:14,882 - Epoch[10] Batch [50]	Speed: 193.44 samples/sec	accuracy=0.875938
+2018-04-29 09:09:31,820 - Epoch[10] Batch [100]	Speed: 188.93 samples/sec	accuracy=0.865000
+2018-04-29 09:09:48,846 - Epoch[10] Batch [150]	Speed: 187.96 samples/sec	accuracy=0.878750
+2018-04-29 09:10:00,437 - Epoch[10] Resetting Data Iterator
+2018-04-29 09:10:00,438 - Epoch[10] Time cost=62.468
+2018-04-29 09:10:04,616 - Epoch[10] Validation-accuracy=0.847470
+2018-04-29 09:10:22,235 - Epoch[11] Batch [50]	Speed: 185.70 samples/sec	accuracy=0.888437
+2018-04-29 09:10:39,358 - Epoch[11] Batch [100]	Speed: 186.89 samples/sec	accuracy=0.876563
+2018-04-29 09:10:55,791 - Epoch[11] Batch [150]	Speed: 194.73 samples/sec	accuracy=0.879062
+2018-04-29 09:11:06,537 - Epoch[11] Resetting Data Iterator
+2018-04-29 09:11:06,538 - Epoch[11] Time cost=61.922
+2018-04-29 09:11:10,427 - Epoch[11] Validation-accuracy=0.664435
+2018-04-29 09:11:26,613 - Epoch[12] Batch [50]	Speed: 202.44 samples/sec	accuracy=0.889375

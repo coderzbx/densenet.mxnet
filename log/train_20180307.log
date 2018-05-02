@@ -1,0 +1,15 @@
+nohup: ignoring input
+usage: train_densenet.py [-h] [--gpus GPUS] [--data-dir DATA_DIR]
+                         [--data-type DATA_TYPE] [--list-dir LIST_DIR]
+                         [--train_prefix TRAIN_PREFIX]
+                         [--model_prefix MODEL_PREFIX]
+                         [--val_prefix VAL_PREFIX] [--lr LR] [--mom MOM]
+                         [--bn-mom BN_MOM] [--wd WD] [--batch-size BATCH_SIZE]
+                         [--growth-rate GROWTH_RATE] [--drop-out DROP_OUT]
+                         [--reduction REDUCTION] [--workspace WORKSPACE]
+                         [--depth DEPTH] [--num-classes NUM_CLASSES]
+                         [--aug-level {1,2,3}] [--num-examples NUM_EXAMPLES]
+                         [--kv-store KV_STORE]
+                         [--model-load-epoch MODEL_LOAD_EPOCH]
+                         [--frequent FREQUENT] [--retrain]
+train_densenet.py: error: unrecognized arguments: seq: 001,
