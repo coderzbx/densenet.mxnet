@@ -97,7 +97,8 @@ def load(saver, sess, ckpt_path):
 
 def main():
     """Create the model and start the training."""
-    data = mx.sym.Variable(name='data', shape=(1, 3, 1024, 2048))
+    # data = mx.sym.Variable(name='data', shape=(1, 3, 1024, 2048))
+    data = mx.sym.Variable(name='data', shape=(1, 3, 416, 416))
 
     net = ICNet_BN({'data': data}, is_training=True, num_classes=13,
                    filter_scale=1)
@@ -106,6 +107,10 @@ def main():
     sub24_out = net.layers['sub24_out']
     sub124_out = net.layers['conv6_interp']
     all_inputs = sub124_out.list_arguments()
+
+    print(sub4_out.infer_shape()[1])
+    print(sub24_out.infer_shape()[1])
+    print(sub124_out.infer_shape()[1])
 
     layer_names = []
     for i in all_inputs:

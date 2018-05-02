@@ -86,7 +86,7 @@ def main():
         symbol = DenseNet(units=units, num_stage=4, growth_rate=48 if args.depth == 161 else args.growth_rate, num_class=args.num_classes,
                             data_type="kd", reduction=args.reduction, drop_out=args.drop_out, bottle_neck=True,
                             bn_mom=args.bn_mom, workspace=args.workspace)
-        # mx.viz.plot_network(symbol).view()
+        mx.viz.plot_network(symbol).view()
 	
     else:
         raise ValueError("do not support {} yet".format(args.data_type))
@@ -115,21 +115,22 @@ def main():
         label_width         = 1,
         data_name           = 'data',
         label_name          = 'softmax_label',
-        resize              = 256,
-        data_shape          = (3, 224, 224),
-        max_img_size        = 256,
-        min_img_size        = 256,
+        resize              = 128,
+        data_shape          = (3, 112, 112),
+        # max_img_size        = 128,
+        # min_img_size        = 128,
         batch_size          = args.batch_size,
-        pad                 = 0,
+        pad                 = 1,
         fill_value          = 127,  # only used when pad is valid
         rand_crop           = True,
-        max_random_scale    = 1.1,  # 480 with imagnet and vggface, 384 with msface, 32 with cifar10
-        min_random_scale    = 0.9,  # 256.0/480.0=0.533, 256.0/384.0=0.667
-        max_aspect_ratio    = 0.1,
+        # max_random_scale    = 0.8,
+        # min_random_scale    = 0.5,
+        # max_aspect_ratio    = 0.667,
+        # min_aspect_ratio    = 0.375,
         random_h            = 0,  # 0.4*90
         random_s            = 0,  # 0.4*127
         random_l            = 0,  # 0.4*127
-        max_rotate_angle    = 5,
+        max_rotate_angle    = 0,
         max_shear_ratio     = 0,
         rand_mirror         = False,
         shuffle             = True,
@@ -144,14 +145,14 @@ def main():
     val = mx.io.ImageRecordIter(
         path_imgrec         = file_name,
         label_width         = 1,
-        resize              = 256,
-        max_img_size        = 256,
-        min_img_size        = 256,
+        resize              = 128,
+        # max_img_size        = 128,
+        # min_img_size        = 128,
         data_name           = 'data',
         label_name          = 'softmax_label',
         batch_size          = args.batch_size,
-        data_shape          = (3, 224, 224),
-        rand_crop           = False,
+        data_shape          = (3, 112, 112),
+        rand_crop           = True,
         rand_mirror         = False,
         num_parts           = kv.num_workers,
         part_index          = kv.rank)
@@ -184,8 +185,8 @@ def main():
         kvstore            = kv,
         batch_end_callback = mx.callback.Speedometer(args.batch_size, args.frequent),
         epoch_end_callback = checkpoint)
-    #logging.info("top-1 and top-5 acc is {}".format(model.score(X = val,
-    #               eval_metric = ['acc', mx.metric.create('top_k_accuracy', top_k = 5)])))
+    logging.info("top-1 and top-5 acc is {}".format(model.score(X = val,
+                  eval_metric = ['acc', mx.metric.create('top_k_accuracy', top_k = 5)])))
 
 if __name__ == "__main__":
     # nohup python -u /opt/densenet.mxnet/train_densenet_wd.py
@@ -201,12 +202,12 @@ if __name__ == "__main__":
     parser.add_argument('--train_prefix', type=str, default='', help='list file name')
     parser.add_argument('--model_prefix', type=str, default='', help='list model name')
     parser.add_argument('--val_prefix', type=str, default='', help='list file name')
-    parser.add_argument('--step', type=str, default='100,300,500', help='step size to change lr')
+    parser.add_argument('--step', type=str, default='5000,20000,50000', help='step size to change lr')
     parser.add_argument('--lr', type=float, default=0.1, help='initialization learning reate')
     parser.add_argument('--mom', type=float, default=0.9, help='momentum for sgd')
     parser.add_argument('--bn-mom', type=float, default=0.9, help='momentum for batch normlization')
     parser.add_argument('--wd', type=float, default=0.0005, help='weight decay for sgd')
-    parser.add_argument('--log', type=str, default="/data/deeplearning/dataset/arrow/log/", help='log path')
+    parser.add_argument('--log', type=str, default="/data/deeplearning/dataset/sign/log/", help='log path')
     parser.add_argument('--batch-size', type=int, default=256, help='the batch size')
     parser.add_argument('--growth-rate', type=int, default=32, help='the growth rate of DenseNet')
     parser.add_argument('--drop-out', type=float, default=0.3, help='the probability of an element to be zeroed')
@@ -214,16 +215,16 @@ if __name__ == "__main__":
     parser.add_argument('--workspace', type=int, default=512, help='memory space size(MB) used in convolution, if xpu '
                         ' memory is oom, then you can try smaller vale, such as --workspace 256')
     parser.add_argument('--depth', type=int, default=50, help='the depth of resnet')
-    parser.add_argument('--num-classes', type=int, default=15, help='the class number of your task')
+    parser.add_argument('--num-classes', type=int, default=66, help='the class number of your task')
     parser.add_argument('--aug-level', type=int, default=3, choices=[1, 2, 3],
                         help='level 1: use only random crop and random mirror\n'
                              'level 2: add scale/aspect/hsv augmentation based on level 1\n'
                              'level 3: add rotation/shear augmentation based on level 2')
-    parser.add_argument('--num-examples', type=int, default=0, help='the number of training examples')
+    parser.add_argument('--num-examples', type=int, default=7617, help='the number of training examples')
     parser.add_argument('--kv-store', type=str, default='device', help='the kvstore type')
     parser.add_argument('--model-load-epoch', type=int, default=0,
                         help='load the model on an epoch using the model-load-prefix')
-    parser.add_argument('--frequent', type=int, default=50, help='frequency of logging')
+    parser.add_argument('--frequent', type=int, default=10, help='frequency of logging')
     parser.add_argument('--retrain', action='store_true', default=False, help='true means continue training')
     args = parser.parse_args()
     # if not os.path.exists("./log"):
