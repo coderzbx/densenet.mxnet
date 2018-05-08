@@ -32,6 +32,7 @@ def parse_args():
         description='Create an image list or \
         make a record database by reading from an image list')
     parser.add_argument('--list', help='prefix of input/output lst and rec files.', required=True)
+    parser.add_argument('--dir', help='prefix of input/output lst and rec files.', required=True)
     args = parser.parse_args()
     return args
 
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     image_list = list(image_list)
     count = len(image_list)
 
-    check_dir = "/data/deeplearning/dataset/arrow/record/0321"
+    check_dir = args.dir
     if not os.path.exists(check_dir):
         os.makedirs(check_dir)
 

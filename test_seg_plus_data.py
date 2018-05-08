@@ -115,7 +115,8 @@ data_iter = ImageSegRecordIter(
     left_lane_id=3,
     right_lane_id=4,
     shuffle=False,
-    label_map_file="/opt/densenet.mxnet/label_map.txt"
+    label_map_file="/opt/densenet.mxnet/label_map.txt",
+    label_scale=0.3
 )
 
 data_iter.reset()
@@ -142,14 +143,15 @@ while next_batch:
     data_label = data_iter.getlabel()
     data = data_iter.getdata()
 
+    print("label:{}".format(data_label.shape))
+    print("data:{}".format(data.shape))
+
     if batch_index == 0 and save_image:
         for i in range(batch_size):
             image_index = i
             start = time.time()
-            # print("provide_data:{}".format(data_iter.provide_data[i].shape))
-            # print("provide_label:{}".format(data_iter.provide_label[i].shape))
-            # print("label:{}".format(data_label.shape))
-            # print("data:{}".format(data.shape))
+            print("provide_data:{}".format(data_iter.provide_data[i].shape))
+            print("provide_label:{}".format(data_iter.provide_label[i].shape))
             _label = data_label[i].asnumpy().astype(np.uint8)
             # cv2.imwrite("/opt/densenet.mxnet/test_plus_batch/{}.png".format(image_index), _label)
             # label
@@ -182,6 +184,6 @@ while next_batch:
     if not next_batch:
         data_iter.reset()
         next_batch = data_iter.iter_next()
-    if batch_index == 50:
+    if batch_index == 10:
         break
 exit(0)

@@ -12,8 +12,8 @@ if __name__ == "__main__":
     parser.add_argument('--result', type=str, required=True)
     args = parser.parse_args()
 
-    rotate_range = [-10, 10]
-    target_count = 1000
+    rotate_range = [-2, 2]
+    target_count = 5000
 
     if not os.path.exists(args.dir):
         print("dir:{} not exist".format(args.dir))
